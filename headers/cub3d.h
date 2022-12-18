@@ -8,9 +8,9 @@
 # include <unistd.h>
 # include <math.h>
 # include <stdlib.h>
-# define HEIGHT 1024
-# define WIDTH 2048
-# define MINIMAP_GRID 30
+# define HEIGHT 1000
+# define WIDTH 1500
+# define MINIMAP_GRID 15
 
 /*
 	Image Controller
@@ -30,17 +30,6 @@ typedef struct s_player
 	float	y;
 }	t_player;
 
-/*
-	Mlx and window pointer controller
-	@param Mlx mlx pointer
-	@param Window window pointer
-*/
-typedef struct s_mlxController
-{
-	void	*mlx;
-	void	*window;
-}				t_mlx;
-
 typedef struct s_game
 {
 	char**	grid;
@@ -48,10 +37,34 @@ typedef struct s_game
 	char*	e_tex;
 	char*	s_tex;
 	char*	w_tex;
-	int		floor;
 	int		ceiling;
+	int		floor;
 }	t_game;
 
+/*
+	Mlx and window pointer controller
+	@param Mlx mlx pointer
+	@param Window window pointer
+*/
+typedef struct s_mlxController
+{
+	void		*mlx;
+	void		*window;
+	t_img		image;
+	t_player	player;
+	t_game		game;
+}				t_mlx;
+
+void	process_args(t_game *game, char *path, t_player *player);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
+void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
+void	draw_square(t_img *img, double x, double y, int colour);
+void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
+void	draw_map(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
+
+int	get_trgb(int t, int r, int g, int b);
+int	strToColour(char *str);
+int	keyhandler(int keycode, t_mlx *mlx);
+int	close_exit(t_mlx *vars);
 
 #endif // !CUB3D_H
