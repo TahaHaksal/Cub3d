@@ -24,7 +24,7 @@ int	main(int ac, char **av)
 	mlx.player = &player;
 
 	draw_map(&mlx); // Tavan ve zemini ekrana bastırıyor
-	draw_minimap(mlx.image, mlx.game, mlx.player, &mlx);
+	// draw_minimap(mlx.image, mlx.game, mlx.player, &mlx);
 
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx); // player hareketi -------> burada &mlx.player yolladığımız için x y 0 geliyordu.
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx); // esc

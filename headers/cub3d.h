@@ -12,6 +12,8 @@
 # define WIDTH 1500
 # define MINIMAP_GRID 15
 # define FOV 60
+# define ROT_SPEED 0.1
+# define MOV_SPEED 0.5
 
 /*
 	Psuedo vector struct
@@ -81,5 +83,7 @@ int		keyhandler(int keycode, t_mlx *mlx);
 int		close_exit(t_mlx *vars);
 double	map(double value, double from_high, double to_low, double to_high);
 int		norm(double x, double y);
+void	vert_line(int x, int line_start, int line_end, t_img *img);
+void	diagonal_line(t_v start, t_v end, t_img *img);
 
 #endif // !CUB3D_H

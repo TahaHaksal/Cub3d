@@ -43,13 +43,13 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 }
 
-void	calc_DDA(t_game *game, t_v map, t_v sideDist, t_v step, t_v deltaDist)
+double	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 {
 	int		hit;
 	int		side;
 	double	perpWallDist;
 
-	hit = 0;
+ 	hit = 0;
 	while (hit == 0)
 	{
 		//jump to next map square, either in x-direction, or in y-direction
@@ -66,65 +66,110 @@ void	calc_DDA(t_game *game, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 			side = 1;
 		}
 		//Check if ray has hit a wall
-		if (game->grid[(int)map.y][(int)map.x] == '1')
+		if (mlx->game->grid[(int)map.y][(int)map.x] == '1')
 			hit = 1;
 	}
 	if (side == 0)
-		perpWallDist = (sideDist.x - deltaDist.x);
+		perpWallDist = fabs(sideDist.x - deltaDist.x);
 	else
-		perpWallDist = (sideDist.y - deltaDist.y);
-	printf("WallDist: %f\n", perpWallDist);
+		perpWallDist = fabs(sideDist.y - deltaDist.y);
+	return (perpWallDist);
+}
+
+void	calc_delta_dist(t_v raydir, t_v *delta_dist)
+{
+	if (raydir.y == 0)
+		delta_dist->x = 0;
+	else
+	{
+		if (raydir.x == 0)
+			delta_dist->x = 1;
+		else
+			delta_dist->x = fabs(1 / raydir.x);
+	}
+	if (raydir.x == 0)
+		delta_dist->y = 0;
+	else
+	{
+		if (raydir.y == 0)
+			delta_dist->y = 1;
+		else
+			delta_dist->y = fabs(1 / raydir.y);
+	}
 }
 
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
 	for (int x = 0; x < WIDTH; x++)
 	{
+		//Ray yönü
 		double	cameraX = 2 * x / (double) WIDTH - 1;
 		t_v		rayDir;
-		//length of ray from one x or y-side to next x or y-side
+
+		//Rayin x veya y yönünden bir sonraki x veya y yönüne uzaklığı
 		t_v		deltaDist;
-		//what direction to step in x or y-direction (either +1 or -1)
+
+		//İlerlenecek kutunun yönü (örn sağ kutuya gidilecekse step.x = 1)
 		t_v		step;
-		//length of ray from current position to next x or y-side
+
+		//Bulunulan konumdan bir sonraki x veya y duvarına uzaklık
 		t_v		sideDist;
-		//which box of the map we're in
+
+		//Haritanın hangi gridinde olduğunu söylüyor.
 		t_v		map;
 
-		rayDir.x = player->dir.x + player->plane.x * (2 * x / (double)WIDTH - 1);
-		rayDir.y = player->dir.y + player->plane.y * (2 * x / (double)WIDTH - 1);
-		deltaDist.x = fabs(1.0 / rayDir.x);
-		deltaDist.y = fabs(1.0 / rayDir.y);
+		double	wallDist;
+		int		wallStart;
+		int		wallEnd;
+
+		// printf("%f\n", cameraX);
+		rayDir.x = player->dir.x + player->plane.x * cameraX;
+		rayDir.y = player->dir.y + player->plane.y * cameraX;
+
+
+		// deltaDist.x = (rayDir.x == 0) ? 1e30 : fabs(1.0 / rayDir.x);
+		// deltaDist.y = (rayDir.y == 0) ? 1e30 : fabs(1.0 / rayDir.y);
+		calc_delta_dist(rayDir, &deltaDist);
+
 		map.x = (int)player->pos.x;
 		map.y = (int)player->pos.y;
-		sideDist.x = 0;
-		sideDist.y = 0;
+
 		if (rayDir.x < 0)
 		{
 			step.x = -1;
-			sideDist.x = (player->pos.x - floor(player->pos.x)) * deltaDist.x;
-			// printf("SideDist.x = %f\n", sideDist.x);
+			sideDist.x = (player->pos.x - map.x) * deltaDist.x;
 		}
 		else
 		{
 			step.x = 1;
-			sideDist.y = (floor(player->pos.x) + 1.0 - player->pos.x) * deltaDist.x;
-			// printf("SideDist.x = %f\n", sideDist.x);
+			sideDist.y = (map.x + 1.0 - player->pos.x) * deltaDist.x;
 		}
 		if (rayDir.y < 0)
 		{
-			step.y = -1;
-			sideDist.y = (player->pos.x - floor(player->pos.x)) * deltaDist.y;
-			// printf("SideDist.y = %f\n", sideDist.y);
+			step.y = 1;
+			sideDist.y = (map.y + 1.0 - player->pos.y) * deltaDist.y;
 		}
 		else
 		{
-			step.y = 1;
-			sideDist.y = (floor(player->pos.y) + 1.0 - player->pos.y) * deltaDist.y;
-			// printf("SideDist.y = %f\n", sideDist.y);
+			step.y = -1;
+			sideDist.y = (player->pos.y - map.y) * deltaDist.y;
 		}
-		//perform DDA
-		calc_DDA(game, map, sideDist, step, deltaDist);
+		//DDA hesaplanıyor duvar mesafesi alınıyor.
+		wallDist = calc_DDA(mlx, map, sideDist, step, deltaDist);
+		wallDist = HEIGHT / wallDist;
+
+		//duvarın çizilmeye başlayacağı konum
+		wallStart = -wallDist / 2 + HEIGHT / 2;
+		if (wallStart < 0)
+			wallStart = 0;
+
+		//duvarın çizilmeyi bitireceği konum
+		wallEnd = wallDist / 2 + HEIGHT / 2;
+		if (wallEnd >= HEIGHT)
+			wallEnd = HEIGHT - 1;
+
+		//dikey çizgi çiziyor
+		vert_line (x, wallStart, wallEnd, img);
 	}
 }
 
@@ -145,4 +190,5 @@ void	draw_map(t_mlx *mlx)
 			my_mlx_pixel_put(mlx->image, x, y, mlx->game->floor);
 	}
 	draw_scene(mlx->image, mlx->game, mlx->player, mlx);
+	draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
 }
