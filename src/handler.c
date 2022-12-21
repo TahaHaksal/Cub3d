@@ -28,10 +28,10 @@ void	calc_movement_f(t_mlx *mlx)
 	posy = mlx->player->pos.y;
 	dirx = mlx->player->dir.x;
 	diry = mlx->player->dir.y;
-	if (!mlx->game->grid[(int)(posy)][(int)(posx + dirx * MOV_SPEED)])
+	if (mlx->game->grid[(int)(posy)][(int)(posx + dirx * MOV_SPEED)] == '0')
 		mlx->player->pos.x += dirx * MOV_SPEED;
-	if (!mlx->game->grid[(int)(posy + diry * MOV_SPEED)][(int)(posx)])
-		mlx->player->pos.y += diry * MOV_SPEED;
+	if (mlx->game->grid[(int)(posy - diry * MOV_SPEED)][(int)(posx)] == '0')
+		mlx->player->pos.y -= diry * MOV_SPEED;
 }
 
 void	calc_movement_b(t_mlx *mlx)
@@ -45,10 +45,10 @@ void	calc_movement_b(t_mlx *mlx)
 	posy = mlx->player->pos.y;
 	dirx = mlx->player->dir.x;
 	diry = mlx->player->dir.y;
-	if (!mlx->game->grid[(int)(posy)][(int)(posx - dirx * MOV_SPEED)])
+	if (mlx->game->grid[(int)(posy)][(int)(posx - dirx * MOV_SPEED)] == '0')
 		mlx->player->pos.x -= dirx * MOV_SPEED;
-	if (!mlx->game->grid[(int)(posy - diry * MOV_SPEED)][(int)(posx)])
-		mlx->player->pos.y -= diry * MOV_SPEED;
+	if (mlx->game->grid[(int)(posy + diry * MOV_SPEED)][(int)(posx)] == '0')
+		mlx->player->pos.y += diry * MOV_SPEED;
 }
 
 int	keyhandler(int keycode, t_mlx *mlx)
@@ -62,9 +62,9 @@ int	keyhandler(int keycode, t_mlx *mlx)
 	else if (keycode == 2)
 		calc_rotation(mlx->player, 0);
 	else if (keycode == 1)
-		calc_movement_f(mlx);
-	else if (keycode == 13)
 		calc_movement_b(mlx);
+	else if (keycode == 13)
+		calc_movement_f(mlx);
 	mlx_clear_window(mlx->mlx, mlx->window);
 	draw_map(mlx);
 	return (0);
