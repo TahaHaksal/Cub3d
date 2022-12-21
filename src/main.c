@@ -30,7 +30,7 @@ int	main(int ac, char **av)
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx); // esc
 
 	mlx_loop(mlx.mlx);
-	mlx_destroy_image(mlx.mlx, mlx.image->img);
-	mlx_destroy_window(mlx.mlx, mlx.window);
+	// mlx_destroy_image(mlx.mlx, mlx.image->img);
+	// mlx_destroy_window(mlx.mlx, mlx.window);
 	exit(0);
 }

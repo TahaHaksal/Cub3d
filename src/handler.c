@@ -11,10 +11,10 @@ void	calc_rotation(t_player *player, char sign)
 		rotation_speed = -ROT_SPEED;
 	oldDirX = player->dir.x;
 	oldPlaneX = player->plane.x;
-	player->dir.x = player->dir.x * cos(rotation_speed) - player->dir.y * sin(rotation_speed);
-	player->dir.y = oldDirX * sin(rotation_speed) + player->dir.y * cos(rotation_speed);
-	player->plane.x = player->plane.x * cos(rotation_speed) - player->plane.y * sin(rotation_speed);
-	player->plane.y = oldPlaneX * sin(rotation_speed) + player->plane.y * cos(rotation_speed);
+	player->dir.x = oldDirX * cosf(rotation_speed) - player->dir.y * sinf(rotation_speed);
+	player->dir.y = oldDirX * sinf(rotation_speed) + player->dir.y * cosf(rotation_speed);
+	player->plane.x = oldPlaneX * cosf(rotation_speed) - player->plane.y * sinf(rotation_speed);
+	player->plane.y = oldPlaneX * sinf(rotation_speed) + player->plane.y * cosf(rotation_speed);
 }
 
 void	calc_movement_f(t_mlx *mlx)
@@ -53,7 +53,6 @@ void	calc_movement_b(t_mlx *mlx)
 
 int	keyhandler(int keycode, t_mlx *mlx)
 {
-	printf("keycode: %d\n", keycode);
 	// Hareket olması için engel kontrolünü sağlayan koşullar eklendi (floating hareketlerde duvarlar bug da kalıyor)
 	if (keycode == 53)
 		exit(0);

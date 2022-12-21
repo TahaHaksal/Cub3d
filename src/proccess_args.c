@@ -39,7 +39,7 @@ void	process_args(t_game *game, char *path, t_player *player)
 				player->pos.y = i;
 				player->dir.x = 0;
 				player->dir.y = 1;
-				player->plane.x = 0.66;
+				player->plane.x = -1;
 				player->plane.y = 0;
 			}
 			i++;

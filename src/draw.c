@@ -39,6 +39,24 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 				draw_square(img, j, i, 0x95FFFFFF);
 		}
 	}
+	for (int x = 0; x < WIDTH; x++)
+	{
+		//-1 1 arası ölçeklendirilen bir değer
+		double	cameraX = 2 * x / (double) WIDTH - 1;
+		t_v		rayDir;
+		t_v		temp;
+		t_v		temp2;
+
+		rayDir.x = player->dir.x + player->plane.x * cameraX;
+		rayDir.y = player->dir.y + player->plane.y * cameraX;
+		temp.x = MINIMAP_GRID * player->pos.x;
+		temp.y = MINIMAP_GRID * player->pos.y;
+		temp2.x = player->pos.x * MINIMAP_GRID + 2*(rayDir.x * MINIMAP_GRID);
+		temp2.y = player->pos.y * MINIMAP_GRID + 2*(-rayDir.y * MINIMAP_GRID);
+
+		diagonal_line(temp, temp2, img);
+	}
+	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 }
@@ -55,24 +73,27 @@ double	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 		//jump to next map square, either in x-direction, or in y-direction
 		if (sideDist.x < sideDist.y)
 		{
+			// printf("stepdir.x % f\n", step.x);
 			sideDist.x += deltaDist.x;
 			map.x += step.x;
 			side = 0;
 		}
 		else
 		{
+			// printf("stepdir.y % f\n", step.y);
 			sideDist.y += deltaDist.y;
 			map.y += step.y;
 			side = 1;
 		}
+		// printf("mapx %d, mapy %d\n", (int)map.x, (int)map.y);
 		//Check if ray has hit a wall
-		if (mlx->game->grid[(int)map.y][(int)map.x] == '1')
+		if (mlx->game->grid[(int)(map.y)][(int)(map.x)] == '1')
 			hit = 1;
 	}
 	if (side == 0)
-		perpWallDist = fabs(sideDist.x - deltaDist.x);
+		perpWallDist = sideDist.x - deltaDist.x;
 	else
-		perpWallDist = fabs(sideDist.y - deltaDist.y);
+		perpWallDist = sideDist.y - deltaDist.y;
 	return (perpWallDist);
 }
 
@@ -103,7 +124,7 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	for (int x = 0; x < WIDTH; x++)
 	{
 		//Ray yönü
-		double	cameraX = 2 * x / (double) WIDTH - 1;
+		double	cameraX = 2 * x / (double)WIDTH - 1;
 		t_v		rayDir;
 
 		//Rayin x veya y yönünden bir sonraki x veya y yönüne uzaklığı
@@ -126,9 +147,6 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		rayDir.x = player->dir.x + player->plane.x * cameraX;
 		rayDir.y = player->dir.y + player->plane.y * cameraX;
 
-
-		// deltaDist.x = (rayDir.x == 0) ? 1e30 : fabs(1.0 / rayDir.x);
-		// deltaDist.y = (rayDir.y == 0) ? 1e30 : fabs(1.0 / rayDir.y);
 		calc_delta_dist(rayDir, &deltaDist);
 
 		map.x = (int)player->pos.x;
@@ -142,7 +160,8 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		else
 		{
 			step.x = 1;
-			sideDist.y = (map.x + 1.0 - player->pos.x) * deltaDist.x;
+			// Bu satırın amk koca bir günümü aldı
+			sideDist.x = (map.x + 1.0 - player->pos.x) * deltaDist.x;
 		}
 		if (rayDir.y < 0)
 		{
@@ -156,6 +175,7 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		}
 		//DDA hesaplanıyor duvar mesafesi alınıyor.
 		wallDist = calc_DDA(mlx, map, sideDist, step, deltaDist);
+
 		wallDist = HEIGHT / wallDist;
 
 		//duvarın çizilmeye başlayacağı konum
@@ -169,6 +189,7 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 			wallEnd = HEIGHT - 1;
 
 		//dikey çizgi çiziyor
+
 		vert_line (x, wallStart, wallEnd, img);
 	}
 }
@@ -177,6 +198,7 @@ void	draw_map(t_mlx *mlx)
 {
 	int	median = HEIGHT / 2, y = -1, x;
 
+	//Draws the background
 	while (++y < median)
 	{
 		x = -1;
@@ -189,6 +211,8 @@ void	draw_map(t_mlx *mlx)
 		while (++x < WIDTH)
 			my_mlx_pixel_put(mlx->image, x, y, mlx->game->floor);
 	}
+	//Draws Walls
 	draw_scene(mlx->image, mlx->game, mlx->player, mlx);
+	//Draws the minimap
 	draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
 }

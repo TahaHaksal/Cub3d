@@ -3,7 +3,7 @@
 void	vert_line(int x, int line_start, int line_end, t_img *img)
 {
 	while (line_start++ < line_end)
-		my_mlx_pixel_put(img, x, line_start, 0);
+		my_mlx_pixel_put(img, x, line_start, 0x005050FF);
 }
 
 void	diagonal_line(t_v start, t_v end, t_img *img)
@@ -21,7 +21,7 @@ void	diagonal_line(t_v start, t_v end, t_img *img)
 	steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
 	for (int i = 0; i <= steps; i++)
 	{
-		my_mlx_pixel_put(img, (int)roundf(start.x), (int)roundf(start.y), 0);
+		my_mlx_pixel_put(img, (int)roundf(start.x), (int)roundf(start.y), 0x000000FF);
 		start.x += Xinc;
 		start.y += Yinc;
 	}
