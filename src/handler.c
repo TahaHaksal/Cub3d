@@ -6,9 +6,9 @@ void	calc_rotation(t_player *player, char sign)
 	double	oldPlaneX;
 	double	rotation_speed;
 
-	rotation_speed = ROT_SPEED;
+	rotation_speed = -ROT_SPEED;
 	if (sign == 'l')
-		rotation_speed = -ROT_SPEED;
+		rotation_speed = ROT_SPEED;
 	oldDirX = player->dir.x;
 	oldPlaneX = player->plane.x;
 	player->dir.x = oldDirX * cosf(rotation_speed) - player->dir.y * sinf(rotation_speed);

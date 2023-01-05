@@ -1,5 +1,6 @@
 #include "../headers/cub3d.h"
 
+
 int	main(int ac, char **av)
 {
 	t_mlx		mlx;
@@ -18,10 +19,10 @@ int	main(int ac, char **av)
 	image.img = mlx_new_image(mlx.mlx, WIDTH, HEIGHT);
 	image.addr = mlx_get_data_addr(image.img, &image.bits_per_pixel, &image.line_length, &image.endian);
 
-	//SegFault engellemek için
 	mlx.image = &image;
 	mlx.game = &game;
 	mlx.player = &player;
+	//SegFault engellemek için
 
 	draw_map(&mlx); // Tavan ve zemini ekrana bastırıyor
 	// draw_minimap(mlx.image, mlx.game, mlx.player, &mlx);

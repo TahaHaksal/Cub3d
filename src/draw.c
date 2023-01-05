@@ -39,29 +39,29 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 				draw_square(img, j, i, 0x95FFFFFF);
 		}
 	}
-	for (int x = 0; x < WIDTH; x++)
-	{
-		//-1 1 arası ölçeklendirilen bir değer
-		double	cameraX = 2 * x / (double) WIDTH - 1;
-		t_v		rayDir;
-		t_v		temp;
-		t_v		temp2;
+	// for (int x = 0; x < WIDTH; x++)
+	// {
+	// 	//-1 1 arası ölçeklendirilen bir değer
+	// 	double	cameraX = 2 * x / (double) WIDTH - 1;
+	// 	t_v		rayDir;
+	// 	t_v		temp;
+	// 	t_v		temp2;
 
-		rayDir.x = player->dir.x + player->plane.x * cameraX;
-		rayDir.y = player->dir.y + player->plane.y * cameraX;
-		temp.x = MINIMAP_GRID * player->pos.x;
-		temp.y = MINIMAP_GRID * player->pos.y;
-		temp2.x = player->pos.x * MINIMAP_GRID + 2*(rayDir.x * MINIMAP_GRID);
-		temp2.y = player->pos.y * MINIMAP_GRID + 2*(-rayDir.y * MINIMAP_GRID);
+	// 	rayDir.x = player->dir.x + player->plane.x * cameraX;
+	// 	rayDir.y = player->dir.y + player->plane.y * cameraX;
+	// 	temp.x = MINIMAP_GRID * player->pos.x;
+	// 	temp.y = MINIMAP_GRID * player->pos.y;
+	// 	temp2.x = player->pos.x * MINIMAP_GRID + 2*(rayDir.x * MINIMAP_GRID);
+	// 	temp2.y = player->pos.y * MINIMAP_GRID + 2*(-rayDir.y * MINIMAP_GRID);
 
-		diagonal_line(temp, temp2, img);
-	}
+	// 	diagonal_line(temp, temp2, img);
+	// }
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 }
 
-double	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
+t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 {
 	int		hit;
 	int		side;
@@ -94,7 +94,7 @@ double	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 		perpWallDist = sideDist.x - deltaDist.x;
 	else
 		perpWallDist = sideDist.y - deltaDist.y;
-	return (perpWallDist);
+	return ((t_v){.x=perpWallDist, .y=side});
 }
 
 void	calc_delta_dist(t_v raydir, t_v *delta_dist)
@@ -119,6 +119,31 @@ void	calc_delta_dist(t_v raydir, t_v *delta_dist)
 	}
 }
 
+// void	calc_sides(t_player *player, t_v delta, t_v map, t_v *side, t_v *step)
+// {
+// 	if (rayDir.x < 0)
+// 	{
+// 		step->x = -1;
+// 		side->x = (player->pos.x - map.x) * delta.x;
+// 	}
+// 	else
+// 	{
+// 		step->x = 1;
+// 		// Bu satırın amk koca bir günümü aldı
+// 		side->x = (map.x + 1.0 - player->pos.x) * delta.x;
+// 	}
+// 	if (rayDir.y < 0)
+// 	{
+// 		step->y = 1;
+// 		side->y = (map.y + 1.0 - player->pos.y) * delta.y;
+// 	}
+// 	else
+// 	{
+// 		step->y = -1;
+// 		side->y = (player->pos.y - map.y) * delta.y;
+// 	}
+// }
+
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
 	for (int x = 0; x < WIDTH; x++)
@@ -139,11 +164,10 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		//Haritanın hangi gridinde olduğunu söylüyor.
 		t_v		map;
 
-		double	wallDist;
+		t_v		wallDist;
 		int		wallStart;
 		int		wallEnd;
 
-		// printf("%f\n", cameraX);
 		rayDir.x = player->dir.x + player->plane.x * cameraX;
 		rayDir.y = player->dir.y + player->plane.y * cameraX;
 
@@ -176,21 +200,31 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		//DDA hesaplanıyor duvar mesafesi alınıyor.
 		wallDist = calc_DDA(mlx, map, sideDist, step, deltaDist);
 
-		wallDist = HEIGHT / wallDist;
+		wallDist.x = HEIGHT / wallDist.x;
 
 		//duvarın çizilmeye başlayacağı konum
-		wallStart = -wallDist / 2 + HEIGHT / 2;
+		wallStart = -wallDist.x / 3 + HEIGHT / 2;
 		if (wallStart < 0)
 			wallStart = 0;
 
 		//duvarın çizilmeyi bitireceği konum
-		wallEnd = wallDist / 2 + HEIGHT / 2;
+		wallEnd = wallDist.x / 3 + HEIGHT / 2;
 		if (wallEnd >= HEIGHT)
 			wallEnd = HEIGHT - 1;
-
 		//dikey çizgi çiziyor
+		//Güney
+		if (wallDist.y > 0 && rayDir.y > 0)
+			vert_line (x, wallStart, wallEnd, img, 0x006666FF);
+		//Kuzey
+		else if (wallDist.y > 0)
+			vert_line (x, wallStart, wallEnd, img, 0x00CCCCCFF);
+		//Batı
+		else if (rayDir.x > 0)
+			vert_line(x, wallStart, wallEnd, img, 0x003333FF);
+		//Doğu
+		else
+			vert_line(x, wallStart, wallEnd, img, 0x009999FF);
 
-		vert_line (x, wallStart, wallEnd, img);
 	}
 }
 

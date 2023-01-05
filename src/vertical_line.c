@@ -1,9 +1,9 @@
 #include "../headers/cub3d.h"
 
-void	vert_line(int x, int line_start, int line_end, t_img *img)
+void	vert_line(int x, int line_start, int line_end, t_img *img, int color)
 {
 	while (line_start++ < line_end)
-		my_mlx_pixel_put(img, x, line_start, 0x005050FF);
+		my_mlx_pixel_put(img, x, line_start, color);
 }
 
 void	diagonal_line(t_v start, t_v end, t_img *img)

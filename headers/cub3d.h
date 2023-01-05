@@ -4,6 +4,7 @@
 # include "../Libft/Libft/libft.h"
 # include "../Libft/Libft/get_next_line.h"
 # include <stdio.h>
+# include <stdbool.h>
 # include <fcntl.h>
 # include <unistd.h>
 # include <math.h>
@@ -48,10 +49,9 @@ typedef struct s_player
 typedef struct s_game
 {
 	char**	grid;
-	char*	n_tex;
-	char*	e_tex;
-	char*	s_tex;
-	char*	w_tex;
+	char*	tex_paths[5];
+	t_img	textures[5];
+	t_v		image_sizes[5];
 	int		ceiling;
 	int		floor;
 }	t_game;
@@ -83,7 +83,7 @@ int		keyhandler(int keycode, t_mlx *mlx);
 int		close_exit(t_mlx *vars);
 double	map(double value, double from_high, double to_low, double to_high);
 int		norm(double x, double y);
-void	vert_line(int x, int line_start, int line_end, t_img *img);
+void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
 void	diagonal_line(t_v start, t_v end, t_img *img);
 
 #endif // !CUB3D_H
