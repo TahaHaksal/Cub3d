@@ -9,12 +9,12 @@
 # include <unistd.h>
 # include <math.h>
 # include <stdlib.h>
-# define HEIGHT 1000
-# define WIDTH 1500
+# define HEIGHT 1080
+# define WIDTH 1920
 # define MINIMAP_GRID 15
 # define FOV 60
 # define ROT_SPEED 0.1
-# define MOV_SPEED 0.5
+# define MOV_SPEED 0.2
 
 /*
 	Psuedo vector struct
@@ -26,6 +26,22 @@ typedef struct s_2dVector
 	double	x;
 	double	y;
 }	t_v;
+
+typedef struct s_rayVals
+{
+	//Ray direction
+	t_v	rayDir;
+	//Int version of player pos
+	t_v	map;
+	//Which side of the wall the ray hit
+	t_v	side;
+	//Which way to go
+	t_v	step;
+	//Initial Delta Distance
+	t_v	delta;
+	//Wall Dist and Side info
+	t_v	wall;
+}				t_rayVals;
 
 /*
 	Image Controller
@@ -41,17 +57,19 @@ typedef struct s_imgController
 
 typedef struct s_player
 {
-	t_v		pos;
-	t_v		dir;
-	t_v		plane;
+	t_v			pos;
+	t_v			dir;
+	t_v			plane;
+	t_rayVals	*d;
 }	t_player;
 
 typedef struct s_game
 {
 	char**	grid;
-	char*	tex_paths[5];
-	t_img	textures[5];
-	t_v		image_sizes[5];
+	int		row;
+	char*	tex_paths[4];
+	t_img	*textures;
+	t_v		image_sizes[4];
 	int		ceiling;
 	int		floor;
 }	t_game;
@@ -70,7 +88,8 @@ typedef struct s_mlxController
 	t_game		*game;
 }				t_mlx;
 
-void	process_args(t_game *game, char *path, t_player *player);
+
+void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	draw_square(t_img *img, double x, double y, int colour);

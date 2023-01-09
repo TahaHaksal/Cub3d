@@ -6,14 +6,11 @@ int	char_to_index(char c, t_player *player)
 	player->dir.y = 0;
 	player->plane.x = 0;
 	player->plane.y = 0;
-	if (c == 'N')
+	if (c == 'N' || c == 'E')
 		return (1);
-	else if (c == 'S')
+	else if (c == 'S' || c == 'W')
 		return (-1);
-	else if (c == 'W')
-		return (-1);
-	else
-		return (1);
+	return (0);
 }
 
 char	*ft_strpbrk(char *string, char *set)
@@ -57,16 +54,16 @@ bool	process_tex(t_game *game, char *line)
 	return (true);
 }
 
-void	paths_to_img(t_mlx *mlx)
+void	paths_to_img(t_mlx *mlx, t_game *game)
 {
 	t_img	*textures;
 	char	**tex_paths;
 	t_v		*size;
 
-	textures = mlx->game->textures;
-	tex_paths = mlx->game->tex_paths;
-	size = mlx->game->image_sizes;
-	(*textures).img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[0], (int *)&size[0].x, (int *)&size[0].y);
+	textures = game->textures;
+	tex_paths = game->tex_paths;
+	size = game->image_sizes;
+	textures[0].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[0], (int *)&size[0].x, (int *)&size[0].y);
 	textures[1].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[1], (int *)&size[1].x, (int *)&size[1].y);
 	textures[2].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[2], (int *)&size[2].x, (int *)&size[2].y);
 	textures[3].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[3], (int *)&size[3].x, (int *)&size[3].y);
@@ -98,10 +95,11 @@ void	process_grid(t_game *game, t_player *player, char *line)
 		player->pos.y = i;
 	}
 	i++;
+	game->row = i;
 	free(line);
 }
 
-void	process_args(t_game *game, char *path, t_player *player)
+void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 {
 	int		fd;
 	char	*ptr;
@@ -121,7 +119,10 @@ void	process_args(t_game *game, char *path, t_player *player)
 			line = get_next_line(fd);
 		}
 		//Work in progress convert paths to images
-		// paths_to_img(mlx);
+		game->textures = malloc(sizeof(t_img) * 5);
+		paths_to_img(mlx, game);
+		// (void)mlx;
+		player->d = malloc(sizeof(t_rayVals));
 	}
 	else
 	{

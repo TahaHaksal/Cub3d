@@ -13,8 +13,8 @@ int	main(int ac, char **av)
 		perror("This program needs 2 arguments to function!");
 		exit(1);
 	}
-	process_args(&game, av[1], &player);
 	mlx.mlx = mlx_init();
+	process_args(&game, av[1], &player, &mlx);
 	mlx.window = mlx_new_window(mlx.mlx, WIDTH, HEIGHT, "Cub3D");
 	image.img = mlx_new_image(mlx.mlx, WIDTH, HEIGHT);
 	image.addr = mlx_get_data_addr(image.img, &image.bits_per_pixel, &image.line_length, &image.endian);
@@ -23,10 +23,7 @@ int	main(int ac, char **av)
 	mlx.game = &game;
 	mlx.player = &player;
 	//SegFault engellemek için
-
 	draw_map(&mlx); // Tavan ve zemini ekrana bastırıyor
-	// draw_minimap(mlx.image, mlx.game, mlx.player, &mlx);
-
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx); // player hareketi -------> burada &mlx.player yolladığımız için x y 0 geliyordu.
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx); // esc
 

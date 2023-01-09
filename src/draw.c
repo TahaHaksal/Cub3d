@@ -29,7 +29,7 @@ void	draw_square(t_img *img, double x, double y, int colour)
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
 	// printf("x: %f	y: %f\n", mlx->player.x, mlx->player.y); // -> Kameranın konumu
-	for (int i = 0; game->grid[i]; i++)
+	for (int i = 0; i < game->row; i++)
 	{
 		for (int j = 0; game->grid[i][j]; j++)
 		{
@@ -39,23 +39,6 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 				draw_square(img, j, i, 0x95FFFFFF);
 		}
 	}
-	// for (int x = 0; x < WIDTH; x++)
-	// {
-	// 	//-1 1 arası ölçeklendirilen bir değer
-	// 	double	cameraX = 2 * x / (double) WIDTH - 1;
-	// 	t_v		rayDir;
-	// 	t_v		temp;
-	// 	t_v		temp2;
-
-	// 	rayDir.x = player->dir.x + player->plane.x * cameraX;
-	// 	rayDir.y = player->dir.y + player->plane.y * cameraX;
-	// 	temp.x = MINIMAP_GRID * player->pos.x;
-	// 	temp.y = MINIMAP_GRID * player->pos.y;
-	// 	temp2.x = player->pos.x * MINIMAP_GRID + 2*(rayDir.x * MINIMAP_GRID);
-	// 	temp2.y = player->pos.y * MINIMAP_GRID + 2*(-rayDir.y * MINIMAP_GRID);
-
-	// 	diagonal_line(temp, temp2, img);
-	// }
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
@@ -70,23 +53,18 @@ t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
  	hit = 0;
 	while (hit == 0)
 	{
-		//jump to next map square, either in x-direction, or in y-direction
 		if (sideDist.x < sideDist.y)
 		{
-			// printf("stepdir.x % f\n", step.x);
 			sideDist.x += deltaDist.x;
 			map.x += step.x;
 			side = 0;
 		}
 		else
 		{
-			// printf("stepdir.y % f\n", step.y);
 			sideDist.y += deltaDist.y;
 			map.y += step.y;
 			side = 1;
 		}
-		// printf("mapx %d, mapy %d\n", (int)map.x, (int)map.y);
-		//Check if ray has hit a wall
 		if (mlx->game->grid[(int)(map.y)][(int)(map.x)] == '1')
 			hit = 1;
 	}
@@ -119,112 +97,82 @@ void	calc_delta_dist(t_v raydir, t_v *delta_dist)
 	}
 }
 
-// void	calc_sides(t_player *player, t_v delta, t_v map, t_v *side, t_v *step)
-// {
-// 	if (rayDir.x < 0)
-// 	{
-// 		step->x = -1;
-// 		side->x = (player->pos.x - map.x) * delta.x;
-// 	}
-// 	else
-// 	{
-// 		step->x = 1;
-// 		// Bu satırın amk koca bir günümü aldı
-// 		side->x = (map.x + 1.0 - player->pos.x) * delta.x;
-// 	}
-// 	if (rayDir.y < 0)
-// 	{
-// 		step->y = 1;
-// 		side->y = (map.y + 1.0 - player->pos.y) * delta.y;
-// 	}
-// 	else
-// 	{
-// 		step->y = -1;
-// 		side->y = (player->pos.y - map.y) * delta.y;
-// 	}
-// }
+void	calc_sides(t_player *player)
+{
+	t_rayVals	*d;
+
+	d = player->d;
+	if (d->rayDir.x < 0)
+	{
+		d->step.x = -1;
+		d->side.x = (player->pos.x - d->map.x) * d->delta.x;
+	}
+	else
+	{
+		d->step.x = 1;
+		// Bu satırın amk koca bir günümü aldı
+		d->side.x = (d->map.x + 1.0 - player->pos.x) * d->delta.x;
+	}
+	if (d->rayDir.y < 0)
+	{
+		d->step.y = 1;
+		d->side.y = (d->map.y + 1.0 - player->pos.y) * d->delta.y;
+	}
+	else
+	{
+		d->step.y = -1;
+		d->side.y = (player->pos.y - d->map.y) * d->delta.y;
+	}
+}
+
+void	draw_walls(int x, t_rayVals *d, t_img *img)
+{
+	int	wallStart;
+	int	wallEnd;
+
+	d->wall.x = HEIGHT / d->wall.x;
+	wallStart = -d->wall.x / 3 + HEIGHT / 2;
+	if (wallStart < 0)
+		wallStart = 0;
+	wallEnd = d->wall.x / 3 + HEIGHT / 2;
+	if (wallEnd >= HEIGHT)
+		wallEnd = HEIGHT - 1;
+	//Güney
+	if (d->wall.y > 0 && d->rayDir.y > 0)
+		vert_line (x, wallStart, wallEnd, img, 0x006666FF);
+	//Kuzey
+	else if (d->wall.y > 0)
+		vert_line (x, wallStart, wallEnd, img, 0x00CCCCCFF);
+	//Batı
+	else if (d->rayDir.x > 0)
+		vert_line(x, wallStart, wallEnd, img, 0x003333FF);
+	//Doğu
+	else
+		vert_line(x, wallStart, wallEnd, img, 0x009999FF);
+}
 
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
-	for (int x = 0; x < WIDTH; x++)
+	t_rayVals	*d;
+	int			x;
+
+	x = 0;
+	d = player->d;
+	while (x++ < WIDTH)
 	{
 		//Ray yönü
 		double	cameraX = 2 * x / (double)WIDTH - 1;
-		t_v		rayDir;
-
-		//Rayin x veya y yönünden bir sonraki x veya y yönüne uzaklığı
-		t_v		deltaDist;
-
-		//İlerlenecek kutunun yönü (örn sağ kutuya gidilecekse step.x = 1)
-		t_v		step;
-
-		//Bulunulan konumdan bir sonraki x veya y duvarına uzaklık
-		t_v		sideDist;
-
-		//Haritanın hangi gridinde olduğunu söylüyor.
-		t_v		map;
-
-		t_v		wallDist;
 		int		wallStart;
 		int		wallEnd;
 
-		rayDir.x = player->dir.x + player->plane.x * cameraX;
-		rayDir.y = player->dir.y + player->plane.y * cameraX;
-
-		calc_delta_dist(rayDir, &deltaDist);
-
-		map.x = (int)player->pos.x;
-		map.y = (int)player->pos.y;
-
-		if (rayDir.x < 0)
-		{
-			step.x = -1;
-			sideDist.x = (player->pos.x - map.x) * deltaDist.x;
-		}
-		else
-		{
-			step.x = 1;
-			// Bu satırın amk koca bir günümü aldı
-			sideDist.x = (map.x + 1.0 - player->pos.x) * deltaDist.x;
-		}
-		if (rayDir.y < 0)
-		{
-			step.y = 1;
-			sideDist.y = (map.y + 1.0 - player->pos.y) * deltaDist.y;
-		}
-		else
-		{
-			step.y = -1;
-			sideDist.y = (player->pos.y - map.y) * deltaDist.y;
-		}
-		//DDA hesaplanıyor duvar mesafesi alınıyor.
-		wallDist = calc_DDA(mlx, map, sideDist, step, deltaDist);
-
-		wallDist.x = HEIGHT / wallDist.x;
-
-		//duvarın çizilmeye başlayacağı konum
-		wallStart = -wallDist.x / 3 + HEIGHT / 2;
-		if (wallStart < 0)
-			wallStart = 0;
-
-		//duvarın çizilmeyi bitireceği konum
-		wallEnd = wallDist.x / 3 + HEIGHT / 2;
-		if (wallEnd >= HEIGHT)
-			wallEnd = HEIGHT - 1;
-		//dikey çizgi çiziyor
-		//Güney
-		if (wallDist.y > 0 && rayDir.y > 0)
-			vert_line (x, wallStart, wallEnd, img, 0x006666FF);
-		//Kuzey
-		else if (wallDist.y > 0)
-			vert_line (x, wallStart, wallEnd, img, 0x00CCCCCFF);
-		//Batı
-		else if (rayDir.x > 0)
-			vert_line(x, wallStart, wallEnd, img, 0x003333FF);
-		//Doğu
-		else
-			vert_line(x, wallStart, wallEnd, img, 0x009999FF);
-
+		d->rayDir.x = player->dir.x + player->plane.x * cameraX;
+		d->rayDir.y = player->dir.y + player->plane.y * cameraX;
+		calc_delta_dist(d->rayDir, &d->delta);
+		d->map.x = (int)player->pos.x;
+		d->map.y = (int)player->pos.y;
+		calc_sides(player);
+		d->wall = calc_DDA(mlx, d->map, d->side, d->step, d->delta);
+		draw_walls(x, player->d, img);
 	}
 }
 
