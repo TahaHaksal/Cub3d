@@ -2,8 +2,8 @@ NO ../images/greystone.xpm
 SO ../images/mossy.xpm
 WE ../images/redbrick.xpm
 EA ../images/wood.xpm
-F 121,200,42
-C 22,100,150
+F 92, 101, 104
+C 46, 50, 52
         1111111111111111111111111
         1000000000110000000000001
         1011000001110000000000001

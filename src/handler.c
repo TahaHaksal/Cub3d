@@ -85,7 +85,7 @@ int	keyhandler(int keycode, t_mlx *mlx)
 {
 	if (keycode == 53)
 		exit(0);
-	if (keycode == 123)
+	else if (keycode == 123)
 		calc_rotation(mlx->player, 'l');
 	else if (keycode == 124)
 		calc_rotation(mlx->player, 0);

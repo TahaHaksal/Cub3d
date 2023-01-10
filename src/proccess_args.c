@@ -101,12 +101,14 @@ void	process_grid(t_game *game, t_player *player, char *line)
 
 void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 {
+	int		a;
 	int		fd;
 	char	*ptr;
 	char	*line;
 
 	if ((fd = open(path, O_RDONLY)))
 	{
+		game->weapon =  mlx_xpm_file_to_image(mlx->mlx, "/Users/dkarhan/Desktop/ak-47.xpm", &a, &a);
 		while ((line = get_next_line(fd)))
 		{
 			if (!process_tex(game, line))
@@ -121,7 +123,6 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 		//Work in progress convert paths to images
 		game->textures = malloc(sizeof(t_img) * 5);
 		paths_to_img(mlx, game);
-		// (void)mlx;
 		player->d = malloc(sizeof(t_rayVals));
 	}
 	else

@@ -11,10 +11,10 @@
 # include <stdlib.h>
 # define HEIGHT 1080
 # define WIDTH 1920
-# define MINIMAP_GRID 15
+# define MINIMAP_GRID 10
 # define FOV 60
-# define ROT_SPEED 0.1
-# define MOV_SPEED 0.2
+# define ROT_SPEED 0.05
+# define MOV_SPEED 0.15
 
 /*
 	Psuedo vector struct
@@ -65,6 +65,9 @@ typedef struct s_player
 
 typedef struct s_game
 {
+	int	mouse_first;
+	int	mouse_last;
+	void	*weapon;
 	char**	grid;
 	int		row;
 	char*	tex_paths[4];
@@ -105,5 +108,7 @@ int		norm(double x, double y);
 void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
 void	diagonal_line(t_v start, t_v end, t_img *img);
 int		checkMap(char *path);
+void	calc_rotation(t_player *player, char sign);
+void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
 
 #endif // !CUB3D_H
