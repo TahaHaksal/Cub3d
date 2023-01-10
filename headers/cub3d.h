@@ -104,5 +104,6 @@ double	map(double value, double from_high, double to_low, double to_high);
 int		norm(double x, double y);
 void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
 void	diagonal_line(t_v start, t_v end, t_img *img);
+int		checkMap(char *path);
 
 #endif // !CUB3D_H
