@@ -8,9 +8,9 @@ int	main(int ac, char **av)
 	t_game		game;
 	t_player	player;
 
-	if (ac != 2)
+	if (ac != 2 || !checkMap(av[1]))
 	{
-		perror("This program needs 2 arguments to function!");
+		perror("Maps Error or This program needs 2 arguments to function!");
 		exit(1);
 	}
 	mlx.mlx = mlx_init();
