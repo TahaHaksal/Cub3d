@@ -72,7 +72,7 @@ t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 		perpWallDist = sideDist.x - deltaDist.x;
 	else
 		perpWallDist = sideDist.y - deltaDist.y;
-	return ((t_v){.x=perpWallDist, .y=side});
+	return ((t_v){.x = perpWallDist, .y = side});
 }
 
 void	calc_delta_dist(t_v raydir, t_v *delta_dist)
@@ -110,7 +110,6 @@ void	calc_sides(t_player *player)
 	else
 	{
 		d->step.x = 1;
-		// Bu satırın amk koca bir günümü aldı
 		d->side.x = (d->map.x + 1.0 - player->pos.x) * d->delta.x;
 	}
 	if (d->rayDir.y < 0)

@@ -74,9 +74,11 @@ int	RightAndLeftCheck(char **M, int i, int j, int len)
 
 int	SpaceAndZeroCheck(char **M, int i, int j)
 {
+	int	a;
+
 	while (++i < j)
 	{
-		int	a = -1;
+        a = -1;
 		while (M[i][++a])
 		{
 			if (M[i][a] == ' ')

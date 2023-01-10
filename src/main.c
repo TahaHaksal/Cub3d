@@ -1,6 +1,5 @@
 #include "../headers/cub3d.h"
 
-
 int	main(int ac, char **av)
 {
 	t_mlx		mlx;
@@ -22,13 +21,14 @@ int	main(int ac, char **av)
 	mlx.image = &image;
 	mlx.game = &game;
 	mlx.player = &player;
-	//SegFault engellemek için
-	draw_map(&mlx); // Tavan ve zemini ekrana bastırıyor
-	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx); // player hareketi -------> burada &mlx.player yolladığımız için x y 0 geliyordu.
-	mlx_hook(mlx.window, 17, 0, close_exit, &mlx); // esc
+
+	draw_map(&mlx);
+	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx);
+	mlx_hook(mlx.window, 17, 0, close_exit, &mlx);
 
 	mlx_loop(mlx.mlx);
 	// mlx_destroy_image(mlx.mlx, mlx.image->img);
 	// mlx_destroy_window(mlx.mlx, mlx.window);
 	exit(0);
 }
+
