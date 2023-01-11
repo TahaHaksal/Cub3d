@@ -10,13 +10,13 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color)
 
 void	draw_square(t_img *img, double x, double y, int colour)
 {
-	int (i) = -1; // norminette geçiriyor
+	int (i) = -1;
 	int	j;
 
-	while (++i < MINIMAP_GRID)
+	while (++i < MINIMAP_GRID - 1)
 	{
 		j = 0;
-		while (j < MINIMAP_GRID)
+		while (j < MINIMAP_GRID - 1)
 			my_mlx_pixel_put(img, (MINIMAP_GRID * x) + i, (MINIMAP_GRID * y) + j++, colour);
 	}
 }
@@ -28,12 +28,28 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		for (int j = 0; game->grid[i][j]; j++)
 		{
 			if (game->grid[i][j] == '1')
-				draw_square(img, j, i, get_trgb(149, 255, 0, 0));
+				draw_square(img, j, i, get_trgb(100, 255, 0, 0));
 			else if (game->grid[i][j] == '0')
-				draw_square(img, j, i, 0x95FFFFFF);
+				draw_square(img, j, i, get_trgb(100, 255, 255, 255));
 		}
 	}
-	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
+	for (int x = 0; x < WIDTH; x++)
+	{
+		double	cameraX = 2 * x / (double) WIDTH - 1;
+		t_v		rayDir;
+		t_v		temp;
+		t_v		temp2;
+
+		rayDir.x = player->dir.x + player->plane.x * cameraX;
+		rayDir.y = player->dir.y + player->plane.y * cameraX;
+		temp.x = MINIMAP_GRID * player->pos.x;
+		temp.y = MINIMAP_GRID * player->pos.y;
+		temp2.x = player->pos.x * MINIMAP_GRID + 2 * (rayDir.x * MINIMAP_GRID);
+		temp2.y = player->pos.y * MINIMAP_GRID + 2 * (-rayDir.y * MINIMAP_GRID);
+
+		diagonal_line(temp, temp2, img);
+	}
+	draw_square(img, player->pos.x, player->pos.y, get_trgb(16, 0, 255, 0));
 }
 
 t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
@@ -119,7 +135,11 @@ void	draw_walls(int x, t_rayVals *d, t_img *img)
 {
 	int	wallStart;
 	int	wallEnd;
+	int	transparan;
 
+	transparan = d->wall.x * 15;
+	if (transparan > 255)
+		transparan = 255;
 	d->wall.x = HEIGHT / d->wall.x;
 	wallStart = -d->wall.x / 3 + HEIGHT / 2;
 	if (wallStart < 0)
@@ -127,18 +147,14 @@ void	draw_walls(int x, t_rayVals *d, t_img *img)
 	wallEnd = d->wall.x / 3 + HEIGHT / 2;
 	if (wallEnd >= HEIGHT)
 		wallEnd = HEIGHT - 1;
-	//Güney
-	if (d->wall.y > 0 && d->rayDir.y > 0)
-		vert_line (x, wallStart, wallEnd, img, get_trgb(0, 1, 13, 141));
-	//Kuzey
-	else if (d->wall.y > 0)
-		vert_line(x, wallStart, wallEnd, img, get_trgb(0, 134, 100, 71));
-	//Batı
-	else if (d->rayDir.x > 0)
-		vert_line (x, wallStart, wallEnd, img, get_trgb(0, 104, 17, 10));
-	//Doğu
-	else
-		vert_line(x, wallStart, wallEnd, img, get_trgb(0, 195, 193, 196));
+	if (d->wall.y > 0 && d->rayDir.y > 0) //Güney
+		vert_line (x, wallStart, wallEnd, img, get_trgb(transparan, 1, 13, 141));
+	else if (d->wall.y > 0) //Kuzey
+		vert_line(x, wallStart, wallEnd, img, get_trgb(transparan, 134, 100, 71));
+	else if (d->rayDir.x > 0) //Batı
+		vert_line (x, wallStart, wallEnd, img, get_trgb(transparan, 104, 17, 10));
+	else //Doğu
+		vert_line(x, wallStart, wallEnd, img, get_trgb(transparan, 195, 193, 196));
 }
 
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
@@ -194,7 +210,6 @@ void	draw_map(t_mlx *mlx)
 	int (y) = -1;
 	int	x;
 
-	//Draws the background
 	while (++y < median)
 	{
 		x = -1;
@@ -208,7 +223,8 @@ void	draw_map(t_mlx *mlx)
 			my_mlx_pixel_put(mlx->image, x, y, mlx->game->floor);
 	}
 	draw_scene(mlx->image, mlx->game, mlx->player, mlx);
-	draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
+	if (mlx->game->miniMap % 2)
+		draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
 	draw_target(mlx);

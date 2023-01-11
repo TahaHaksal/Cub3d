@@ -45,7 +45,7 @@ int	main(int ac, char **av)
 	mlx.game = &game;
 	mlx.player = &player;
 
-	draw_map(&mlx);
+	// draw_map(&mlx);
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx);
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx);
 

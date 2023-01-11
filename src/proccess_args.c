@@ -109,6 +109,7 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 	if ((fd = open(path, O_RDONLY)))
 	{
 		game->weapon =  mlx_xpm_file_to_image(mlx->mlx, "/Users/dkarhan/Desktop/ak-47.xpm", &a, &a);
+		game->miniMap = 1;
 		while ((line = get_next_line(fd)))
 		{
 			if (!process_tex(game, line))
