@@ -47,7 +47,7 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 		temp2.x = player->pos.x * MINIMAP_GRID + 2 * (rayDir.x * MINIMAP_GRID);
 		temp2.y = player->pos.y * MINIMAP_GRID + 2 * (-rayDir.y * MINIMAP_GRID);
 
-		diagonal_line(temp, temp2, img);
+		diagonal_line(temp, temp2, img, mlx);
 	}
 	draw_square(img, player->pos.x, player->pos.y, get_trgb(16, 0, 255, 0));
 }

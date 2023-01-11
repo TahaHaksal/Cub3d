@@ -80,7 +80,7 @@ void	draw_square(t_img *img, double x, double y, int colour);
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
 void	draw_map(t_mlx *mlx);
 void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
-void	diagonal_line(t_v start, t_v end, t_img *img);
+void	diagonal_line(t_v start, t_v end, t_img *img, t_mlx *mlx);
 void	calc_rotation(t_player *player, char sign);
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
 int		get_trgb(int t, int r, int g, int b);

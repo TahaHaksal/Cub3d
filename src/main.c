@@ -45,12 +45,9 @@ int	main(int ac, char **av)
 	mlx.game = &game;
 	mlx.player = &player;
 
-	// draw_map(&mlx);
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx);
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx);
-
 	mlx_loop_hook(mlx.mlx, mouse_move, &mlx);
-
 	mlx_loop(mlx.mlx);
 	// mlx_destroy_image(mlx.mlx, mlx.image->img);
 	// mlx_destroy_window(mlx.mlx, mlx.window);
