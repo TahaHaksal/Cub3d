@@ -1,60 +1,90 @@
 #include "../headers/cub3d.h"
 
-int	topCheck(char **M, int i, int j, int len)
+void	error(char *str)
 {
+	ft_putstr_fd(str, 2);
+	exit(EXIT_FAILURE);
+}
+
+char	**MapControl(char *path, t_v *j_len, int j, int i)
+{
+    int (len) = 0;
+    int (player_count) = 0;
+	int		fd;
+	char	*line;
+	char	**M;
+
+    fd = open(path, O_RDONLY);
+	if (fd < 0)
+		error("Error : wrong file!\n");
+	M = malloc(sizeof(char *) * 100);
+    while ((line = get_next_line(fd)))
+    {
+		if (++i <= 6) // Map gelene kadar ilerle Map gelince çift boyutlu matrise haritayı ekle.
+			continue ;
+		M[++j] = ft_strdup(line);
+		i = -1;
+		while (M[j][++i])
+		{
+			if (!ft_strchr(" 01NEWS", M[j][i]) && M[j][i] != '\n')
+				error("Error : wrong map character!\n");
+			else if (ft_strchr("NEWS", M[j][i]))
+				player_count += 1;
+		}
+		if (len < ft_strlen(M[j]))
+			len = ft_strlen(M[j]); // Haritanın max genişliği
+		i = 100;
+    }
+	if (player_count != 1)
+		error("Error : can only be 1 player!\n");
+	close(fd);
+	j_len->x = j;
+	j_len->y = len;
+	return (M);
+}
+
+void	TopBottomCheck(char **M, int i, int j, int len)
+{
+	int	a;
+
 	while (++i < len)
 	{
-		int a = -1;
+		a = -1;
 		while (M[++a])
 		{
 			if (M[a][i] == ' ')
 				continue;
 			else if (M[a][i] == '0')
-				return (0);
+				error("error: (topCheck) map error!\n");
+			else
+				break;
+		}
+		a = j + 1;
+		while (a-- >= 1)
+		{
+			if (M[a][i] == ' ')
+				continue;
+			else if (M[a][i] == '0')
+				error("error: (bottomCheck) map error!\n");
 			else
 				break;
 		}
 	}
-	return (1);
 }
 
-int	bottomCheck(char **M, int i, int j, int len)
+void	RightLeftCheck(char **M, int i, int j, int len)
 {
-	int	num;
-
-	while (++i < len)
-	{
-		int a = -1;
-		while (M[++a])
-		{
-			if (M[a][i] == ' ')
-				continue;
-			else if (M[a][i] == '0' || M[a][i] == 'N' || M[a][i] == 'E' ||
-					M[a][i] == 'W' || M[a][i] == 'S')
-				num = 0;
-			else
-				num = 1;
-		}
-		if (num == 0)
-			return (0);
-	}
-	return (1);
-}
-
-int	RightAndLeftCheck(char **M, int i, int j, int len)
-{
-	int	num;
 	int	a;
 
 	while (++i < j)
 	{
 		a = ft_strlen(M[i]) - 1;
-		while (M[i][--a])
+		while (a && M[i][--a])
 		{
 			if (M[i][a] == ' ')
 				continue;
 			else if (M[i][a] == '0')
-				return (0);
+				error("error: (RightCheck) map error!\n");
 			else
 				break;
 		}
@@ -64,15 +94,14 @@ int	RightAndLeftCheck(char **M, int i, int j, int len)
 			if (M[i][a] == ' ')
 				continue;
 			else if (M[i][a] == '0')
-				return (0);
+				error("error: (LeftCheck) map error!\n");
 			else
 				break;
 		}
 	}
-	return (1);
 }
 
-int	SpaceAndZeroCheck(char **M, int i, int j)
+void	CharacterCheck(char **M, int i, int j)
 {
 	int	a;
 
@@ -83,62 +112,21 @@ int	SpaceAndZeroCheck(char **M, int i, int j)
 		{
 			if (M[i][a] == ' ')
 			{
-				if((i != 0 && (M[i - 1][a] == '0')))
-					return (0);
-				else if (i != j - 1 && M[i + 1][a] == '0')
-					return (0);
-				else if (a != 0 && M[i][a - 1] == '0')
-					return (0);
-				else if ((a != ft_strlen(M[i]) - 1) && M[i][a + 1] == '0')
-					return (0);
+				if( (i != 0 && (M[i - 1][a] == '0')) ||
+					(i != j - 1 && M[i + 1][a] == '0') ||
+					(a != 0 && M[i][a - 1] == '0') ||
+					(a != ft_strlen(M[i]) - 1) && M[i][a + 1] == '0')
+					error("error: (SpaceCheck) map error!\n");
 			}
 			else if (ft_strchr("0NEWS", M[i][a]))
 			{
-				if (i != 0 && a > ft_strlen(M[i - 1])) // Yukarısı none ise
-					return (0);
-				else if (i != ft_strlen(M[i]) && a > ft_strlen(M[i + 1])) // Aşağısı none ise
-					return (0);
-				else if (i != j - 1 && M[i + 1][a] == ' ')
-					return (0);
-				else if (a != 0 && M[i][a - 1] == ' ')
-					return (0);
-				else if ((a != ft_strlen(M[i]) - 1) && M[i][a + 1] == ' ')
-					return (0);
+				if (i != 0 && a > ft_strlen(M[i - 1]) ||
+					(i != ft_strlen(M[i]) && a > ft_strlen(M[i + 1])) ||
+					(i != j - 1 && M[i + 1][a] == ' ') ||
+					(a != 0 && M[i][a - 1] == ' ') ||
+					((a != ft_strlen(M[i]) - 1) && M[i][a + 1] == ' '))
+					error("error: (Zero-PlayerCheck) map error!\n");
 			}
 		}
 	}
-	return (1);
-}
-
-int checkMap(char *path)
-{
-    int fd, j = -1, i = 0, len = 0, player_count = 0;
-    char *line;
-	char **M = malloc(sizeof(char *) * 100);
-
-    fd = open(path, O_RDONLY);
-    while ((line = get_next_line(fd)))
-    {
-		// Map gelene kadar ilerle Map gelince çift boyutlu matrise haritayı ekle.
-		if (++i <= 6)
-			continue ;
-		M[++j] = ft_strdup(line);
-		if (ft_strnstr(M[j], "N", ft_strlen(M[j])) ||
-			ft_strnstr(M[j], "E", ft_strlen(M[j])) ||
-			ft_strnstr(M[j], "W", ft_strlen(M[j])) ||
-			ft_strnstr(M[j], "S", ft_strlen(M[j])))
-			player_count += 1;
-		if (len < ft_strlen(M[j]))
-			len = ft_strlen(M[j]);
-    }
-	if (player_count != 1)
-		return (0);
-	M[j + 1] = NULL;
-	// Map'e üstten alttan sağdan soldan boşlukları atlayıp bakınca 1 gelmezse ya da
-	// ' ' ile '0' 4 eksenden temas halindeyse error patlatıyor.
-	if (!topCheck(M, -1, j, len) || !bottomCheck(M, -1, j, len) ||
-		!RightAndLeftCheck(M, -1, j, len) ||
-		!SpaceAndZeroCheck(M, -1, j))
-		return (0);
-    return (1);
 }

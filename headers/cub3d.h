@@ -79,7 +79,7 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	draw_square(t_img *img, double x, double y, int colour);
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
-int	draw_map(t_mlx *mlx);
+int		draw_map(t_mlx *mlx);
 void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
 void	diagonal_line(t_v start, t_v end, t_img *img, t_mlx *mlx);
 void	calc_rotation(t_player *player, char sign);
@@ -89,8 +89,14 @@ int		strToColour(char *str);
 int		keyhandler(int keycode, t_mlx *mlx);
 int		close_exit(t_mlx *vars);
 int		norm(double x, double y);
-int		checkMap(char *path);
 double	map(double value, double from_high, double to_low, double to_high);
-int	mouse_move(int x, int y, t_mlx *mlx);
+int		mouse_move(int x, int y, t_mlx *mlx);
+
+void	checkMap(char *path);
+char	**MapControl(char *path, t_v *j_len, int j, int i);
+void	TopBottomCheck(char **M, int i, int j, int len);
+void	RightLeftCheck(char **M, int i, int j, int len);
+void	CharacterCheck(char **M, int i, int j);
+void	error(char *str);
 
 #endif

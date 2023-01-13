@@ -13,14 +13,14 @@ void	diagonal_line(t_v start, t_v end, t_img *img, t_mlx *mlx)
 	double	Xinc;
 	double	Yinc;
 	int		steps;
-	int (i) = 0;
+	int (i) = -1;
 
 	Xinc = dx / (float) steps;
 	Yinc = dy / (float) steps;
 	dx = end.x - start.x;
 	dy = end.y - start.y;
 	steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
-	while (i < 125)
+	while (++i < 125)
 	{
 		if (mlx->game->grid[((int)(start.y) / MINIMAP_GRID)][((int)(start.x) / MINIMAP_GRID)] != '1')
 		{
@@ -30,6 +30,5 @@ void	diagonal_line(t_v start, t_v end, t_img *img, t_mlx *mlx)
 		}
 		else
 			break;
-		i++;
 	}
 }

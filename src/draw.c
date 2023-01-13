@@ -23,17 +23,17 @@ void	draw_square(t_img *img, double x, double y, int colour)
 
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
-	for (int i = 0; i < game->row; i++)
+	for (int i = 0 ; i < game->row ; i++)
 	{
-		for (int j = 0; game->grid[i][j]; j++)
+		for (int j = 0 ; game->grid[i][j]; j++)
 		{
 			if (game->grid[i][j] == '1')
-				draw_square(img, j, i, get_trgb(100, 255, 0, 0));
+				draw_square(img, j, i, get_trgb(125, 255, 0, 0));
 			else if (game->grid[i][j] == '0')
-				draw_square(img, j, i, get_trgb(100, 255, 255, 255));
+				draw_square(img, j, i, get_trgb(125, 255, 255, 255));
 		}
 	}
-	for (int x = 0; x < WIDTH; x++)
+	for (int x = 0 ; x < WIDTH ; x++)
 	{
 		double	cameraX = 2 * x / (double) WIDTH - 1;
 		t_v		rayDir;
@@ -52,7 +52,7 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	draw_square(img, player->pos.x, player->pos.y, get_trgb(16, 0, 255, 0));
 }
 
-t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
+t_v		calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 {
 	int (hit) = 0;
 	int		side;
@@ -182,25 +182,25 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 
 void	draw_target(t_mlx *mlx)
 {
-	mlx_pixel_put(mlx->mlx, mlx->window, 899, 540, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 899, 541, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 900, 540, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 900, 541, get_trgb(0, 255, 0, 0));
+	mlx_pixel_put(mlx->mlx, mlx->window, 899, 540, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 899, 541, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 900, 540, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 900, 541, get_trgb(0, 25, 255, 25));
 
-	mlx_pixel_put(mlx->mlx, mlx->window, 903, 535, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 903, 536, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 904, 535, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 904, 536, get_trgb(0, 255, 0, 0));
+	mlx_pixel_put(mlx->mlx, mlx->window, 903, 536, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 903, 537, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 904, 536, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 904, 537, get_trgb(0, 25, 255, 25));
 
-	mlx_pixel_put(mlx->mlx, mlx->window, 903, 545, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 903, 546, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 904, 545, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 904, 546, get_trgb(0, 255, 0, 0));
+	mlx_pixel_put(mlx->mlx, mlx->window, 903, 544, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 903, 545, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 904, 544, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 904, 545, get_trgb(0, 25, 255, 25));
 
-	mlx_pixel_put(mlx->mlx, mlx->window, 907, 540, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 907, 541, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 908, 540, get_trgb(0, 255, 0, 0));
-	mlx_pixel_put(mlx->mlx, mlx->window, 908, 541, get_trgb(0, 255, 0, 0));
+	mlx_pixel_put(mlx->mlx, mlx->window, 907, 540, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 907, 541, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 908, 540, get_trgb(0, 25, 255, 25));
+	mlx_pixel_put(mlx->mlx, mlx->window, 908, 541, get_trgb(0, 25, 255, 25));
 }
 
 void	draw_ceil_and_floor(t_mlx *mlx, int	x, int y)
@@ -209,13 +209,10 @@ void	draw_ceil_and_floor(t_mlx *mlx, int	x, int y)
 	{
 		x = -1;
 		while (++x < WIDTH)
-			my_mlx_pixel_put(mlx->image, x, y, mlx->game->ceiling);
-	}
-	while (++y < HEIGHT)
-	{
-		x = -1;
-		while (++x < WIDTH)
-			my_mlx_pixel_put(mlx->image, x, y, mlx->game->floor);
+		{
+			my_mlx_pixel_put(mlx->image, x, y, mlx->game->ceiling); // Bir tavan
+			my_mlx_pixel_put(mlx->image, x, y + HEIGHT / 2, mlx->game->floor); // Bir zemin basıyor
+		}
 	}
 }
 

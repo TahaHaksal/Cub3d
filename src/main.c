@@ -1,5 +1,22 @@
 #include "../headers/cub3d.h"
 
+void	freeMap(char **Map, int i)
+{
+	while (i--)
+		free(Map[i]);
+}
+
+void checkMap(char *path)
+{
+	t_v	j_len;
+	char **Map;
+
+	Map = MapControl(path, &j_len, -1, 0);
+	TopBottomCheck(Map, -1, (int)j_len.x, (int)j_len.y);
+	RightLeftCheck(Map, -1, (int)j_len.x, (int)j_len.y);
+	CharacterCheck(Map, -1, (int)j_len.x);
+	freeMap(Map, 100);
+}
 
 int	mouse_move(int x, int y, t_mlx *mlx)
 {
@@ -23,20 +40,16 @@ int	mouse_move(int x, int y, t_mlx *mlx)
 	return (0);
 }
 
-int	main(int ac, char **av)
+void	start_game(char *av)
 {
 	t_mlx		mlx;
 	t_img		image;
 	t_game		game;
 	t_player	player;
 
-	if (ac != 2 || !checkMap(av[1]))
-	{
-		perror("Maps Error or This program needs 2 arguments to function!");
-		exit(1);
-	}
 	mlx.mlx = mlx_init();
-	process_args(&game, av[1], &player, &mlx);
+	process_args(&game, av, &player, &mlx);
+	
 	mlx.window = mlx_new_window(mlx.mlx, WIDTH, HEIGHT, "Cub3D");
 	image.img = mlx_new_image(mlx.mlx, WIDTH, HEIGHT);
 	image.addr = mlx_get_data_addr(image.img, &image.bits_per_pixel, &image.line_length, &image.endian);
@@ -49,9 +62,17 @@ int	main(int ac, char **av)
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx);
 	mlx_hook(mlx.window, 6, 0L, &mouse_move, &mlx);
 	mlx_loop_hook(mlx.mlx, draw_map, &mlx);
-
 	mlx_loop(mlx.mlx);
-	// mlx_destroy_image(mlx.mlx, mlx.image->img);
-	// mlx_destroy_window(mlx.mlx, mlx.window);
-	exit(0);
+}
+
+int	main(int ac, char **av)
+{
+	if (ac == 2)
+	{
+		checkMap(av[1]);
+		start_game(av[1]);
+	}
+	else
+		error("Error: 2 arguments required for the game!\n");
+	return (0);
 }
