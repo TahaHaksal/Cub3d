@@ -99,7 +99,7 @@ int	keyhandler(int keycode, t_mlx *mlx)
 		calc_movement_f(mlx);
 	else if (keycode == 46)
 		mlx->game->miniMap += 1;
-	mlx_clear_window(mlx->mlx, mlx->window);
-	draw_map(mlx);
+	else if (keycode == 14)
+		mlx->game->cursor += 1;
 	return (0);
 }

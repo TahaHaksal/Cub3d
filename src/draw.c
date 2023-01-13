@@ -137,7 +137,7 @@ void	draw_walls(int x, t_rayVals *d, t_img *img)
 	int	wallEnd;
 	int	transparan;
 
-	transparan = d->wall.x * 15;
+	transparan = d->wall.x * 20;
 	if (transparan > 255)
 		transparan = 255;
 	d->wall.x = HEIGHT / d->wall.x;
@@ -168,7 +168,6 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	d = player->d;
 	while (x++ < WIDTH)
 	{
-		//Ray yönü
 		cameraX = 2 * x / (double)WIDTH - 1;
 		d->rayDir.x = player->dir.x + player->plane.x * cameraX;
 		d->rayDir.y = player->dir.y + player->plane.y * cameraX;
@@ -204,13 +203,9 @@ void	draw_target(t_mlx *mlx)
 	mlx_pixel_put(mlx->mlx, mlx->window, 908, 541, get_trgb(0, 255, 0, 0));
 }
 
-void	draw_map(t_mlx *mlx)
+void	draw_ceil_and_floor(t_mlx *mlx, int	x, int y)
 {
-	int (median) = HEIGHT / 2;
-	int (y) = -1;
-	int	x;
-
-	while (++y < median)
+	while (++y < (HEIGHT / 2))
 	{
 		x = -1;
 		while (++x < WIDTH)
@@ -222,10 +217,17 @@ void	draw_map(t_mlx *mlx)
 		while (++x < WIDTH)
 			my_mlx_pixel_put(mlx->image, x, y, mlx->game->floor);
 	}
+}
+
+int	draw_map(t_mlx *mlx)
+{
+	mlx_clear_window(mlx->mlx, mlx->window);
+	draw_ceil_and_floor(mlx, -1, -1);
 	draw_scene(mlx->image, mlx->game, mlx->player, mlx);
 	if (mlx->game->miniMap % 2)
 		draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
 	draw_target(mlx);
+	return (0);
 }

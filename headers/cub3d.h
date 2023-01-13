@@ -13,7 +13,7 @@
 # define WIDTH 1920
 # define MINIMAP_GRID 15
 # define FOV 60
-# define ROT_SPEED 0.05
+# define ROT_SPEED 0.04
 # define MOV_SPEED 0.15
 
 typedef struct s_2dVector
@@ -54,6 +54,7 @@ typedef struct s_game
 	int		mouse_first;
 	int		mouse_last;
 	int		miniMap;
+	int		cursor;
 	int		floor;
 	int		row;
 	int		ceiling;
@@ -78,7 +79,7 @@ void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	draw_square(t_img *img, double x, double y, int colour);
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
-void	draw_map(t_mlx *mlx);
+int	draw_map(t_mlx *mlx);
 void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
 void	diagonal_line(t_v start, t_v end, t_img *img, t_mlx *mlx);
 void	calc_rotation(t_player *player, char sign);
@@ -90,5 +91,6 @@ int		close_exit(t_mlx *vars);
 int		norm(double x, double y);
 int		checkMap(char *path);
 double	map(double value, double from_high, double to_low, double to_high);
+int	mouse_move(int x, int y, t_mlx *mlx);
 
 #endif

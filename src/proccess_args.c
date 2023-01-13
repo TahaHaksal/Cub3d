@@ -110,6 +110,9 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 	{
 		game->weapon =  mlx_xpm_file_to_image(mlx->mlx, "/Users/dkarhan/Desktop/ak-47.xpm", &a, &a);
 		game->miniMap = 1;
+		game->cursor = 1;
+		game->mouse_first = 0;
+		game->mouse_last = 0;
 		while ((line = get_next_line(fd)))
 		{
 			if (!process_tex(game, line))
