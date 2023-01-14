@@ -1,21 +1,21 @@
 #include "../headers/cub3d.h"
 
-void	freeMap(char **Map, int i)
+void	map_free(char **Map, int j)
 {
-	while (i--)
-		free(Map[i]);
+	while (j--)
+		free(Map[j]);
 }
 
-void checkMap(char *path)
+void	checker(char *path)
 {
-	t_v	j_len;
-	char **Map;
+	t_v		j_len;
+	char	**map;
 
-	Map = MapControl(path, &j_len, -1, 0);
-	TopBottomCheck(Map, -1, (int)j_len.x, (int)j_len.y);
-	RightLeftCheck(Map, -1, (int)j_len.x, (int)j_len.y);
-	CharacterCheck(Map, -1, (int)j_len.x);
-	freeMap(Map, 100);
+	map = map_control(path, &j_len, -1, 0);
+	TopBottomCheck(map, -1, (int)j_len.x, (int)j_len.y);
+	RightLeftCheck(map, -1, (int)j_len.x, (int)j_len.y);
+	CharacterCheck(map, -1, (int)j_len.x);
+	map_free(map, (int)j_len.x);
 }
 
 int	mouse_move(int x, int y, t_mlx *mlx)
@@ -49,15 +49,13 @@ void	start_game(char *av)
 
 	mlx.mlx = mlx_init();
 	process_args(&game, av, &player, &mlx);
-	
 	mlx.window = mlx_new_window(mlx.mlx, WIDTH, HEIGHT, "Cub3D");
 	image.img = mlx_new_image(mlx.mlx, WIDTH, HEIGHT);
-	image.addr = mlx_get_data_addr(image.img, &image.bits_per_pixel, &image.line_length, &image.endian);
-
+	image.addr = mlx_get_data_addr(image.img, \
+		&image.bits_per_pixel, &image.line_length, &image.endian);
 	mlx.image = &image;
 	mlx.game = &game;
 	mlx.player = &player;
-
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx);
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx);
 	mlx_hook(mlx.window, 6, 0L, &mouse_move, &mlx);
@@ -69,7 +67,7 @@ int	main(int ac, char **av)
 {
 	if (ac == 2)
 	{
-		checkMap(av[1]);
+		checker(av[1]);
 		start_game(av[1]);
 	}
 	else

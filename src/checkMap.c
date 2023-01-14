@@ -6,14 +6,14 @@ void	error(char *str)
 	exit(EXIT_FAILURE);
 }
 
-char	**MapControl(char *path, t_v *j_len, int j, int i)
+char	**map_control(char *path, t_v *j_len, int j, int i)
 {
-    int (len) = 0;
-    int (player_count) = 0;
 	int		fd;
 	char	*line;
 	char	**M;
 
+    int (len) = 0;
+    int (player_count) = 0;
     fd = open(path, O_RDONLY);
 	if (fd < 0)
 		error("Error : wrong file!\n");

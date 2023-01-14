@@ -93,10 +93,13 @@ double	map(double value, double from_high, double to_low, double to_high);
 int		mouse_move(int x, int y, t_mlx *mlx);
 
 void	checkMap(char *path);
-char	**MapControl(char *path, t_v *j_len, int j, int i);
+char	**map_control(char *path, t_v *j_len, int j, int i);
 void	TopBottomCheck(char **M, int i, int j, int len);
 void	RightLeftCheck(char **M, int i, int j, int len);
 void	CharacterCheck(char **M, int i, int j);
 void	error(char *str);
+
+char	*ft_strpbrk(char *string, char *set);
+int		char_to_index(char c, t_player *player);
 
 #endif
