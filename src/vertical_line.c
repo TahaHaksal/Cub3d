@@ -1,11 +1,28 @@
 #include "../headers/cub3d.h"
 
-void	vert_line(int x, int line_start, int line_end, t_img *img, int color)
+void	vert_line(int x, int line_start, int line_end, t_img *img, int texX, int tH, int lH, t_img *tex)
 {
+	double			step;
+	double			texPos;
+	int				texY;
+	char			*test;
+	unsigned int	color;
+
+	step = 1.0 * tH / lH;
+	texPos = (line_start - HEIGHT / 2 + lH / 2) * step;
 	while (line_start++ < line_end)
+	{
+		texY = (int)texPos & (tH - 1);
+		test = tex->addr + ((texY % 32) * tex->line_length + texX * (tex->bits_per_pixel / 8));
+		color = *(unsigned int *)test;
 		my_mlx_pixel_put(img, x, line_start, color);
+		texPos += step;
+	}
 }
 
+
+// dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+// 	*(unsigned int *)dst = color;
 void	diagonal_line(t_v start, t_v end, t_img *img)
 {
 	double	dx;

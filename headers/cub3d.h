@@ -27,13 +27,20 @@ typedef struct s_2dVector
 	double	y;
 }	t_v;
 
+
+typedef struct s_2dintVector
+{
+	int	x;
+	int	y;
+}	t_i;
+
 typedef struct s_rayVals
 {
 	//Ray direction
 	t_v	rayDir;
 	//Int version of player pos
 	t_v	map;
-	//Which side of the wall the ray hit
+	//Side Dist
 	t_v	side;
 	//Which way to go
 	t_v	step;
@@ -69,7 +76,8 @@ typedef struct s_game
 	int		row;
 	char*	tex_paths[4];
 	t_img	*textures;
-	t_v		image_sizes[4];
+	t_i		*image_sizes;
+	t_i		tex;
 	int		ceiling;
 	int		floor;
 }	t_game;
@@ -91,7 +99,6 @@ typedef struct s_mlxController
 
 void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
-void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
 void	draw_square(t_img *img, double x, double y, int colour);
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx);
 void	draw_map(t_mlx *mlx);
@@ -102,7 +109,7 @@ int		keyhandler(int keycode, t_mlx *mlx);
 int		close_exit(t_mlx *vars);
 double	map(double value, double from_high, double to_low, double to_high);
 int		norm(double x, double y);
-void	vert_line(int x, int line_start, int line_end, t_img *img, int color);
+void	vert_line(int x, int line_start, int line_end, t_img *img, int texX, int tH, int lH, t_img *tex);
 void	diagonal_line(t_v start, t_v end, t_img *img);
 
 #endif // !CUB3D_H

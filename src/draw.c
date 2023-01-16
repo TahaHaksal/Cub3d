@@ -28,7 +28,6 @@ void	draw_square(t_img *img, double x, double y, int colour)
 
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
-	// printf("x: %f	y: %f\n", mlx->player.x, mlx->player.y); // -> Kameranın konumu
 	for (int i = 0; i < game->row; i++)
 	{
 		for (int j = 0; game->grid[i][j]; j++)
@@ -42,6 +41,32 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
 	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, img->img, 0, 0);
+}
+
+/*
+	@param len of the wall
+	@param texture index
+	@param ray info
+	@param player info
+*/
+int	pick_texX(int len, int i, t_rayVals ray, t_player *p, t_game *game)
+{
+	double	wallX;
+	int		texX;
+	int		texW;
+
+	texW = game->image_sizes[i].x;
+	if (ray.wall.y == 0)
+		wallX = p->pos.y - ray.wall.x * ray.rayDir.y;
+	else
+		wallX = p->pos.x + ray.wall.x * ray.rayDir.x;
+	wallX -= floor(wallX);
+	texX = (wallX * (double)(texW));
+	if(ray.wall.y == 0 && ray.rayDir.x > 0)
+		texX = texW - texX - 1;
+	if(ray.wall.y == 1 && ray.rayDir.y < 0)
+		texX = texW - texX - 1;
+	return (texX);
 }
 
 t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
@@ -72,7 +97,7 @@ t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
 		perpWallDist = sideDist.x - deltaDist.x;
 	else
 		perpWallDist = sideDist.y - deltaDist.y;
-	return ((t_v){.x=perpWallDist, .y=side});
+	return ((t_v){.x = perpWallDist, .y = side});
 }
 
 void	calc_delta_dist(t_v raydir, t_v *delta_dist)
@@ -110,7 +135,6 @@ void	calc_sides(t_player *player)
 	else
 	{
 		d->step.x = 1;
-		// Bu satırın amk koca bir günümü aldı
 		d->side.x = (d->map.x + 1.0 - player->pos.x) * d->delta.x;
 	}
 	if (d->rayDir.y < 0)
@@ -125,54 +149,62 @@ void	calc_sides(t_player *player)
 	}
 }
 
-void	draw_walls(int x, t_rayVals *d, t_img *img)
+void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
 {
 	int	wallStart;
 	int	wallEnd;
+	int	wallHeight;
+	int	texX;
+	int	lH;
 
-	d->wall.x = HEIGHT / d->wall.x;
-	wallStart = -d->wall.x / 3 + HEIGHT / 2;
+	lH = (int)(HEIGHT / d->wall.x);
+	wallStart = -lH / 3 + HEIGHT / 2;
 	if (wallStart < 0)
 		wallStart = 0;
-	wallEnd = d->wall.x / 3 + HEIGHT / 2;
-	if (wallEnd >= HEIGHT)
+
+	wallEnd = lH / 3 + HEIGHT / 2;
+	if (wallEnd > HEIGHT)
 		wallEnd = HEIGHT - 1;
+	wallHeight = wallEnd - wallStart;
+
+	texX = pick_texX(x, 1, *d, mlx->player, mlx->game);
 	//Güney
 	if (d->wall.y > 0 && d->rayDir.y > 0)
-		vert_line (x, wallStart, wallEnd, img, 0x006666FF);
+		vert_line (x, wallStart, wallEnd, img, texX, mlx->game->image_sizes[1].y, lH, &mlx->game->textures[1]);
+		// vert_line (x, wallStart, wallEnd, img, 0x006666FF);
 	//Kuzey
 	else if (d->wall.y > 0)
-		vert_line (x, wallStart, wallEnd, img, 0x00CCCCCFF);
+		vert_line (x, wallStart, wallEnd, img, texX, mlx->game->image_sizes[0].y, lH, &mlx->game->textures[0]);
 	//Batı
 	else if (d->rayDir.x > 0)
-		vert_line(x, wallStart, wallEnd, img, 0x003333FF);
+		vert_line(x, wallStart, wallEnd, img, texX, mlx->game->image_sizes[2].y, lH, &mlx->game->textures[2]);
 	//Doğu
 	else
-		vert_line(x, wallStart, wallEnd, img, 0x009999FF);
+		vert_line(x, wallStart, wallEnd, img, texX, mlx->game->image_sizes[3].y, lH, &mlx->game->textures[3]);
 }
 
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
 	t_rayVals	*d;
 	int			x;
+	int		wallStart;
+	int		wallEnd;
+	double	cameraX;
 
-	x = 0;
+	x = -1;
 	d = player->d;
-	while (x++ < WIDTH)
+	while (++x < WIDTH)
 	{
 		//Ray yönü
-		double	cameraX = 2 * x / (double)WIDTH - 1;
-		int		wallStart;
-		int		wallEnd;
-
-		d->rayDir.x = player->dir.x + player->plane.x * cameraX;
-		d->rayDir.y = player->dir.y + player->plane.y * cameraX;
+		cameraX = 2 * x / (double)WIDTH - 1;
+		d->rayDir.x = (player->dir.x + player->plane.x * cameraX) + 0.0000000001;
+		d->rayDir.y = (player->dir.y + player->plane.y * cameraX) + 0.0000000001;
 		calc_delta_dist(d->rayDir, &d->delta);
 		d->map.x = (int)player->pos.x;
 		d->map.y = (int)player->pos.y;
 		calc_sides(player);
 		d->wall = calc_DDA(mlx, d->map, d->side, d->step, d->delta);
-		draw_walls(x, player->d, img);
+		draw_walls(x, player->d, img, mlx);
 	}
 }
 

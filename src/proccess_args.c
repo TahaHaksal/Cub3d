@@ -54,19 +54,22 @@ bool	process_tex(t_game *game, char *line)
 	return (true);
 }
 
-void	paths_to_img(t_mlx *mlx, t_game *game)
+void	paths_to_img(t_mlx *mlx, t_game *game, t_img *textures)
 {
-	t_img	*textures;
 	char	**tex_paths;
-	t_v		*size;
+	t_i		*size;
+	int	x,y;
 
-	textures = game->textures;
 	tex_paths = game->tex_paths;
 	size = game->image_sizes;
-	textures[0].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[0], (int *)&size[0].x, (int *)&size[0].y);
-	textures[1].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[1], (int *)&size[1].x, (int *)&size[1].y);
-	textures[2].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[2], (int *)&size[2].x, (int *)&size[2].y);
-	textures[3].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[3], (int *)&size[3].x, (int *)&size[3].y);
+	textures[0].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[0], &size[0].x, &size[0].y);
+	textures[1].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[1], &size[1].x, &size[1].y);
+	textures[2].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[2], &size[2].x, &size[2].y);
+	textures[3].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[3], &size[3].x, &size[3].y);
+	textures[0].addr = mlx_get_data_addr(textures[0].img, &(textures[0].bits_per_pixel),  &textures[0].line_length,  &textures[0].endian);
+	textures[1].addr = mlx_get_data_addr(textures[1].img, &(textures[1].bits_per_pixel),  &(textures[1].line_length),  &(textures[1].endian));
+	textures[2].addr = mlx_get_data_addr(textures[2].img, &(textures[2].bits_per_pixel),  &(textures[2].line_length),  &(textures[2].endian));
+	textures[3].addr = mlx_get_data_addr(textures[3].img, &(textures[3].bits_per_pixel),  &(textures[3].line_length),  &(textures[3].endian));
 }
 
 void	process_grid(t_game *game, t_player *player, char *line)
@@ -118,10 +121,9 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 			process_grid(game, player, line);
 			line = get_next_line(fd);
 		}
-		//Work in progress convert paths to images
+		game->image_sizes = malloc(sizeof(t_i) * 5);
 		game->textures = malloc(sizeof(t_img) * 5);
-		paths_to_img(mlx, game);
-		// (void)mlx;
+		paths_to_img(mlx, game, game->textures);
 		player->d = malloc(sizeof(t_rayVals));
 	}
 	else
