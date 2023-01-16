@@ -1,36 +1,5 @@
 #include "../headers/cub3d.h"
 
-int	char_to_index(char c, t_player *player)
-{
-	player->dir.x = 0;
-	player->dir.y = 0;
-	player->plane.x = 0;
-	player->plane.y = 0;
-	if (c == 'N' || c == 'E')
-		return (1);
-	else if (c == 'S' || c == 'W')
-		return (-1);
-	return (0);
-}
-
-char	*ft_strpbrk(char *string, char *set)
-{
-	int	i;
-
-	while (*string)
-	{
-		i = 0;
-		while (set[i])
-		{
-			if (*string == set[i])
-				return string;
-			i++;
-		}
-		string++;
-	}
-	return (NULL);
-}
-
 bool	process_tex(t_game *game, char *line)
 {
 	if (!ft_strncmp(line, "NO", 2))
@@ -60,13 +29,13 @@ void	paths_to_img(t_mlx *mlx, t_game *game)
 	char	**tex_paths;
 	t_v		*size;
 
+	int (i) = -1;
 	textures = game->textures;
 	tex_paths = game->tex_paths;
 	size = game->image_sizes;
-	textures[0].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[0], (int *)&size[0].x, (int *)&size[0].y);
-	textures[1].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[1], (int *)&size[1].x, (int *)&size[1].y);
-	textures[2].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[2], (int *)&size[2].x, (int *)&size[2].y);
-	textures[3].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[3], (int *)&size[3].x, (int *)&size[3].y);
+	while (++i < 4)
+		textures[i].img = mlx_xpm_file_to_image \
+		(mlx->mlx, tex_paths[i], (int *)&size[i].x, (int *)&size[i].y);
 }
 
 void	process_grid(t_game *game, t_player *player, char *line)
@@ -94,9 +63,23 @@ void	process_grid(t_game *game, t_player *player, char *line)
 		player->pos.x = ft_strlen(line) - ft_strlen(ptr);
 		player->pos.y = i;
 	}
-	i++;
-	game->row = i;
+	game->row = ++i;
 	free(line);
+}
+
+void	init_game(t_game *game, t_mlx *mlx)
+{
+	int	a;
+
+	game->weapon = mlx_xpm_file_to_image(mlx->mlx, \
+					"/Users/dkarhan/Desktop/ak-47.xpm", &a, &a);
+	game->miniMap = 1;
+	game->cursor = 1;
+	game->mouse_first = 0;
+	game->mouse_last = 0;
+	game->grid = malloc(sizeof(char *) * 100);
+	game->textures = malloc(sizeof(t_img) * 5);
+	paths_to_img(mlx, game);
 }
 
 void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
@@ -105,29 +88,24 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 	char	*ptr;
 	char	*line;
 
-	if ((fd = open(path, O_RDONLY)))
+	fd = open(path, O_RDONLY);
+	if (fd > 2)
 	{
-		while ((line = get_next_line(fd)))
+		init_game(game, mlx);
+		line = get_next_line(fd);
+		while (line)
 		{
 			if (!process_tex(game, line))
 				break ;
+			line = get_next_line(fd);
 		}
-		game->grid = malloc(sizeof(char * ) * 100);
 		while (line)
 		{
 			process_grid(game, player, line);
 			line = get_next_line(fd);
 		}
-		//Work in progress convert paths to images
-		game->textures = malloc(sizeof(t_img) * 5);
-		paths_to_img(mlx, game);
-		// (void)mlx;
 		player->d = malloc(sizeof(t_rayVals));
 	}
 	else
-	{
-		perror ("Couldn't find the file named ");
-		perror (path);
-		exit(2);
-	}
+		error ("Error: Couldn't find the file!\n");
 }
