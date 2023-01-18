@@ -1,42 +1,5 @@
 #include "../headers/cub3d.h"
 
-void	error_exit(char *message, int status)
-{
-	perror(message);
-	exit(status);
-}
-
-int	char_to_index(char c, t_player *player)
-{
-	player->dir.x = 0;
-	player->dir.y = 0;
-	player->plane.x = 0;
-	player->plane.y = 0;
-	if (c == 'N' || c == 'E')
-		return (1);
-	else if (c == 'S' || c == 'W')
-		return (-1);
-	return (0);
-}
-
-char	*ft_strpbrk(char *string, char *set)
-{
-	int	i;
-
-	while (*string)
-	{
-		i = 0;
-		while (set[i])
-		{
-			if (*string == set[i])
-				return (string);
-			i++;
-		}
-		string++;
-	}
-	return (NULL);
-}
-
 bool	process_tex(t_game *game, char *line)
 {
 	if (!ft_strncmp(line, "NO", 2))
@@ -48,9 +11,9 @@ bool	process_tex(t_game *game, char *line)
 	else if (!ft_strncmp(line, "EA", 2))
 		game->tex_paths[3] = ft_strtrim(&line[3], " \r\t\n");
 	else if (!ft_strncmp(line, "F", 1))
-		game->floor = strToColour(&line[2]);
+		game->floor = str_to_colour(&line[2]);
 	else if (!ft_strncmp(line, "C", 1))
-		game->ceiling = strToColour(&line[2]);
+		game->ceiling = str_to_colour(&line[2]);
 	else
 	{
 		return (false);
@@ -58,34 +21,6 @@ bool	process_tex(t_game *game, char *line)
 	}
 	free(line);
 	return (true);
-}
-
-void	paths_to_img(t_mlx *mlx, t_game *game, t_img *tex)
-{
-	char	**tex_paths;
-	t_i		*size;
-	int		i;
-
-	i = 0;
-	game->image_sizes = malloc(sizeof(t_i) * 5);
-	tex_paths = game->tex_paths;
-	size = game->image_sizes;
-	while (i < 4)
-	{
-		tex[i].img = mlx_xpm_file_to_image(mlx->mlx, tex_paths[i], \
-			&size[i].x, &size[i].y);
-		if (!tex[i].img)
-			error_exit("No such image was found.", 3);
-		tex[i].addr = mlx_get_data_addr(tex[i].img, &tex[i].bpp, \
-			&tex[i].ll, &tex[i].nd);
-		i++;
-	}
-}
-
-void	set_vector(double *x, double *y, double val)
-{
-	*x = val;
-	*y = val;
 }
 
 void	process_grid(t_game *game, t_player *player, char *line)
@@ -100,7 +35,10 @@ void	process_grid(t_game *game, t_player *player, char *line)
 	{
 		val = char_to_index(*ptr, player);
 		if (*ptr == 'N' || *ptr == 'S')
-			set_vector(&player->plane.x, &player->dir.y, val);
+		{
+			player->dir.y = val;
+			player->plane.x = val;
+		}
 		else
 		{
 			player->dir.x = val;
@@ -110,11 +48,34 @@ void	process_grid(t_game *game, t_player *player, char *line)
 		player->pos.x = ft_strlen(line) - ft_strlen(ptr);
 		player->pos.y = i;
 	}
-	i++;
-	game->row = i;
+	game->row = ++i;
 	free(line);
 }
 
+void	init_game(t_game *game, t_mlx *mlx, t_img *textrs)
+{
+	int		x;
+	int		y;
+	t_i		*size;
+	char	**tex_paths;
+
+	tex_paths = game->tex_paths;
+	size = game->image_sizes;
+	int (i) = -1;
+	while (++i <= 3)
+	{
+		textrs[i].img = mlx_xpm_file_to_image(mlx->mlx, \
+			tex_paths[i], &size[i].x, &size[i].y);
+		textrs[i].addr = mlx_get_data_addr(textrs[i].img, \
+		&(textrs[i].bpp), &textrs[i].ll, &textrs[i].nd);
+	}
+	game->weapon = mlx_xpm_file_to_image(mlx->mlx, \
+		"./images/ak-47.xpm", &i, &i);
+	game->miniMap = 1;
+	game->cursor = 1;
+	game->mouse_first = 0;
+	game->mouse_last = 0;
+}
 
 void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 {
@@ -123,24 +84,23 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 	char	*line;
 
 	fd = open(path, O_RDONLY);
-	if (fd)
+	if (fd <= 2)
+		error ("Error: Couldn't find the file!\n");
+	line = get_next_line(fd);
+	while (line)
 	{
+		if (!process_tex(game, line))
+			break ;
 		line = get_next_line(fd);
-		while (line)
-		{
-			if (!process_tex(game, line))
-				break ;
-			line = get_next_line(fd);
-		}
-		while (line)
-		{
-			process_grid(game, player, line);
-			line = get_next_line(fd);
-		}
-		game->textures = malloc(sizeof(t_img) * 5);
-		paths_to_img(mlx, game, game->textures);
-		player->d = malloc(sizeof(t_rayVals));
 	}
-	else
-		error_exit("Couldn't find specified file\n", 2);
+	game->grid = malloc(sizeof(char *) * 100);
+	while (line)
+	{
+		process_grid(game, player, line);
+		line = get_next_line(fd);
+	}
+	game->image_sizes = malloc(sizeof(t_i) * 5);
+	game->textures = malloc(sizeof(t_img) * 5);
+	player->d = malloc(sizeof(t_rayVals));
+	init_game(game, mlx, game->textures);
 }
