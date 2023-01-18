@@ -8,7 +8,7 @@ END				=	"\033[0;0m"
 NAME = cub3D
 
 CC = gcc
-FLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+FLAGS = -Wall -Wextra -Werror
 
 SRC = $(shell find ./src -name "*.c")
 OBJ = $(SRC:.c=.o)
