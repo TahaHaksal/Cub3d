@@ -43,17 +43,16 @@ int	mouse_move(int x, int y, t_mlx *mlx)
 void	start_game(char *av)
 {
 	t_mlx		mlx;
-	t_img		image;
+	t_img		img;
 	t_game		game;
 	t_player	player;
 
 	mlx.mlx = mlx_init();
 	process_args(&game, av, &player, &mlx);
 	mlx.window = mlx_new_window(mlx.mlx, WIDTH, HEIGHT, "Cub3D");
-	image.img = mlx_new_image(mlx.mlx, WIDTH, HEIGHT);
-	image.addr = mlx_get_data_addr(image.img, \
-		&image.bpp, &image.ll, &image.nd);
-	mlx.image = &image;
+	img.img = mlx_new_image(mlx.mlx, WIDTH, HEIGHT);
+	img.addr = mlx_get_data_addr(img.img, &img.bpp, &img.ll, &img.nd);
+	mlx.image = &img;
 	mlx.game = &game;
 	mlx.player = &player;
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx);
