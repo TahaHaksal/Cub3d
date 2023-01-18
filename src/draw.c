@@ -52,29 +52,29 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 }
 
 /*
-	@param len of the wall
-	@param texture index
-	@param ray info
-	@param player info
+	@param i texture indexi
+	@param ray ray değerlerimiz
+	@param p player değerlerimiz
+	@param game oyun bilgilerimiz
 */
-int	pick_tex_x(int len, int i, t_rayVals ray, t_player *p, t_game *game)
+int	pick_tex_x(int i, t_rayVals ray, t_player *p, t_game *game)
 {
-	double	wallX;
-	int		texX;
-	int		texW;
+	double	wall_x;
+	int		tex_x;
+	int		tex_w;
 
-	texW = game->image_sizes[i].x;
+	tex_w = game->image_sizes[i].x;
 	if (ray.wall.y == 0)
-		wallX = p->pos.y - ray.wall.x * ray.rayDir.y;
+		wall_x = p->pos.y - ray.wall.x * ray.rayDir.y;
 	else
-		wallX = p->pos.x + ray.wall.x * ray.rayDir.x;
-	wallX -= floor(wallX);
-	texX = (wallX * (double)(texW));
+		wall_x = p->pos.x + ray.wall.x * ray.rayDir.x;
+	wall_x -= floor(wall_x);
+	tex_x = (wall_x * (double)(tex_w));
 	if(ray.wall.y == 0 && ray.rayDir.x > 0)
-		texX = texW - texX - 1;
+		tex_x = tex_w - tex_x - 1;
 	if(ray.wall.y == 1 && ray.rayDir.y < 0)
-		texX = texW - texX - 1;
-	return (texX);
+		tex_x = tex_w - tex_x - 1;
+	return (tex_x);
 }
 
 t_v	calc_DDA(t_mlx *mlx, t_v map, t_v sideDist, t_v step, t_v deltaDist)
@@ -157,33 +157,41 @@ void	calc_sides(t_player *player)
 	}
 }
 
+/*
+	@param which side the wall was hit
+	@param ray direction
+	@returns index for textures
+*/
+int	pick_dir(t_v wall, t_v ray_dir)
+{
+	if (wall.y > 0 && ray_dir.y > 0)
+		return (1);
+	else if (wall.y > 0)
+		return (0);
+	else if (ray_dir.x > 0)
+		return (2);
+	return (3);
+}
+
 void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
 {
-	t_i	wall;
-	t_i	heights;
-	int	wallHeight;
-	int	texX;
-	int	lH;
+	t_img		*t;
+	t_draw_wall	e;
+	int			i;
 
-	lH = (int)(HEIGHT / d->wall.x);
-	wall.x = -lH / 3 + HEIGHT / 2;
-	if (wall.x < 0)
-		wall.x = 0;
-	wall.y = lH / 3 + HEIGHT / 2;
-	if (wall.y > HEIGHT)
-		wall.y = HEIGHT - 1;
-	wallHeight = wall.y - wall.x;
-	heights.x = mlx->game->image_sizes[1].y;
-	heights.y = lH;
-	texX = pick_tex_x(x, 1, *d, mlx->player, mlx->game);
-	if (d->wall.y > 0 && d->rayDir.y > 0)
-		vert_line (x, wall, img, texX, heights, &mlx->game->textures[1]);
-	else if (d->wall.y > 0)
-		vert_line (x, wall, img, texX, heights, &mlx->game->textures[0]);
-	else if (d->rayDir.x > 0)
-		vert_line(x, wall, img, texX, heights, &mlx->game->textures[2]);
-	else
-		vert_line(x, wall, img, texX, heights, &mlx->game->textures[3]);
+	i = pick_dir(d->wall, d->rayDir);
+	t = mlx->game->textures;
+	e.l_h = (int)(HEIGHT / d->wall.x);
+	e.wall_mn = -e.l_h / 3 + HEIGHT / 2;
+	if (e.wall_mn < 0)
+		e.wall_mn = 0;
+	e.wall_mx = e.l_h / 3 + HEIGHT / 2;
+	if (e.wall_mx > HEIGHT)
+		e.wall_mx = HEIGHT - 1;
+	e.t_h = mlx->game->image_sizes[i].y;
+	e.t_w = mlx->game->image_sizes[i].x;
+	e.tex_x = pick_tex_x(i, *d, mlx->player, mlx->game);
+	vert_line(x, img, &t[i], e);
 }
 
 void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)

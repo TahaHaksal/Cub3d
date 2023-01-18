@@ -53,7 +53,6 @@ void	calc_movement_b(t_mlx *mlx)
 
 int	keyhandler(int keycode, t_mlx *mlx)
 {
-	// Hareket olması için engel kontrolünü sağlayan koşullar eklendi (floating hareketlerde duvarlar bug da kalıyor)
 	if (keycode == 53)
 		exit(0);
 	if (keycode == 0)
@@ -64,7 +63,7 @@ int	keyhandler(int keycode, t_mlx *mlx)
 		calc_movement_b(mlx);
 	else if (keycode == 13)
 		calc_movement_f(mlx);
-	mlx_clear_window(mlx->mlx, mlx->window);
+	// mlx_clear_window(mlx->mlx, mlx->window);
 	draw_map(mlx);
 	return (0);
 }

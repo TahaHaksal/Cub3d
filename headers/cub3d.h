@@ -16,11 +16,6 @@
 # define ROT_SPEED 0.1112
 # define MOV_SPEED 0.2
 
-/*
-	Psuedo vector struct
-	@param	x
-	@param	y
-*/
 typedef struct s_2dVector
 {
 	double	x;
@@ -36,17 +31,11 @@ typedef struct s_2dintVector
 
 typedef struct s_rayVals
 {
-	//Ray direction
 	t_v	rayDir;
-	//Int version of player pos
 	t_v	map;
-	//Side Dist
 	t_v	side;
-	//Which way to go
 	t_v	step;
-	//Initial Delta Distance
 	t_v	delta;
-	//Wall Dist and Side info
 	t_v	wall;
 }				t_rayVals;
 
@@ -82,11 +71,6 @@ typedef struct s_game
 	int		floor;
 }	t_game;
 
-/*
-	Mlx and window pointer controller
-	@param Mlx mlx pointer
-	@param Window window pointer
-*/
 typedef struct s_mlxController
 {
 	void		*mlx;
@@ -96,6 +80,15 @@ typedef struct s_mlxController
 	t_game		*game;
 }				t_mlx;
 
+typedef struct s_draw_wall
+{
+	int	tex_x;
+	int	wall_mx;
+	int	wall_mn;
+	int	l_h;
+	int	t_h;
+	int	t_w;
+}				t_draw_wall;
 
 void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx);
 void	my_mlx_pixel_put(t_img *data, int x, int y, int color);
@@ -109,7 +102,7 @@ int		keyhandler(int keycode, t_mlx *mlx);
 int		close_exit(t_mlx *vars);
 double	map(double value, double from_high, double to_low, double to_high);
 int		norm(double x, double y);
-void	vert_line(int x, t_i wall, t_img *img, int texX, t_i h, t_img *tex);
+void	vert_line(int x, t_img *img, t_img *tex, t_draw_wall w);
 void	diagonal_line(t_v start, t_v end, t_img *img);
 
 #endif // !CUB3D_H
