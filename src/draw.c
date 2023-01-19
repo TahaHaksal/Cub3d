@@ -6,12 +6,12 @@ void	draw_square(t_img *img, double x, double y, int colour)
 	int	j;
 
 	i = -1;
-	while (++i < MINIMAP_GRID - 1)
+	while (++i < MINIMAP_GRID)
 	{
 		j = -1;
-		while (++j < MINIMAP_GRID - 1)
-			my_mlx_pixel_put(img, (MINIMAP_GRID * x) + i, \
-				(MINIMAP_GRID * y) + j, colour);
+		while (++j < MINIMAP_GRID)
+			my_mlx_pixel_put(img,  x + i, \
+				y + j, colour);
 	}
 }
 
@@ -36,8 +36,7 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 				my_mlx_pixel_put(img, i + WIDTH / 4, j + HEIGHT / 4, 0x00FFFFFF);
 		}
 	}
-	// calc_diagonal_line(img, player, mlx);
-	draw_square(img, player->pos.x+ HEIGHT / 4, player->pos.y+ HEIGHT / 4, 0x9500FF00);
+	draw_square(img, player->pos.x + WIDTH / 4, player->pos.y + HEIGHT / 4, 0x9500FF00);
 }
 
 void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
@@ -88,9 +87,9 @@ int	draw_map(t_mlx *mlx)
 	mlx_clear_window(mlx->mlx, mlx->window);
 	draw_ceil_and_floor(mlx, -1, -1);
 	draw_scene(mlx->image, mlx->game, mlx->player, mlx);
-	draw_target(mlx);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
-	// mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
+	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
+	draw_target(mlx);
 	if (!(mlx->game->mini_map % 2))
 	{
 		draw_minimap(mlx->image, mlx->game, mlx->player, mlx);

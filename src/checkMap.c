@@ -34,15 +34,17 @@ char	**map_control(char *path, t_v *j_len, int j, int i)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		error("Error : wrong file!\n");
-	m = malloc(sizeof(char *) * 300);
+	m = malloc(sizeof(char *) * 1024);
 	line = get_next_line(fd);
 	while (line)
 	{
 		player_count += map_control2(m, line, &j, &len);
+		free(line);
 		line = get_next_line(fd);
 	}
 	if (player_count != 1)
 		error("Error : can only be 1 player!\n");
+	free(line);
 	close(fd);
 	j_len->x = j;
 	j_len->y = len;
@@ -58,9 +60,7 @@ void	top_bottom_check(char **m, int i, int j, int len)
 		a = -1;
 		while (m[++a])
 		{
-			if (i > ft_strlen(m[a]))
-				break ;
-			if (m[a][i] == ' ')
+			if (m[a][i] == ' ' || i > ft_strlen(m[a]))
 				continue ;
 			else if (m[a][i] == '0')
 				error("error: (topCheck) map error!\n");
@@ -70,7 +70,7 @@ void	top_bottom_check(char **m, int i, int j, int len)
 		a = j + 1;
 		while (a-- >= 1)
 		{
-			if (m[a][i] == ' ')
+			if (m[a][i] == ' ' || i > ft_strlen(m[a]))
 				continue ;
 			else if (m[a][i] == '0')
 				error("error: (bottomCheck) map error!\n");
@@ -132,10 +132,7 @@ void	character_check(char **m, int i, int j)
 					|| (i != j - 1 && m[i + 1][a] == ' ')
 					|| (a != 0 && m[i][a - 1] == ' ')
 					|| ((a != ft_strlen(m[i]) - 1) && m[i][a + 1] == ' '))
-				{
-					printf("%d %d\n", a, i);
 					error("error: (Zero-PlayerCheck) map error!\n");
-				}
 		}
 	}
 }

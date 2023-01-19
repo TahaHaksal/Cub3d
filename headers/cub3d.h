@@ -11,7 +11,7 @@
 # include <stdlib.h>
 # define HEIGHT 1080
 # define WIDTH 1920
-# define MINIMAP_GRID 15
+# define MINIMAP_GRID 5
 # define ROT_SPEED 0.1
 # define MOV_SPEED 0.15
 # define COL 0.5

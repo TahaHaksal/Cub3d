@@ -60,7 +60,7 @@ void	start_game(char *av)
 	mlx.player = &player;
 	mlx_hook(mlx.window, 2, 1L << 0, keyhandler, &mlx);
 	mlx_hook(mlx.window, 17, 0, close_exit, &mlx);
-	mlx_hook(mlx.window, 6, 0L, &mouse_move, &mlx);
+	// mlx_hook(mlx.window, 6, 0L, &mouse_move, &mlx);
 	mlx_loop_hook(mlx.mlx, draw_map, &mlx);
 	mlx_loop(mlx.mlx);
 }

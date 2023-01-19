@@ -64,7 +64,7 @@ void	init_game(t_game *game, t_mlx *mlx, t_img *textrs)
 		textrs[i].img = mlx_xpm_file_to_image(mlx->mlx, \
 			tex_paths[i], &size[i].x, &size[i].y);
 		if (!textrs[i].img)
-			error("Yarra");
+			error("Error: Image not found!\n");
 		textrs[i].addr = mlx_get_data_addr(textrs[i].img, \
 		&(textrs[i].bpp), &textrs[i].ll, &textrs[i].nd);
 	}
@@ -92,12 +92,13 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 			break ;
 		line = get_next_line(fd);
 	}
-	game->grid = malloc(sizeof(char *) * 100);
+	game->grid = malloc(sizeof(char *) * 1024);
 	while (line)
 	{
 		process_grid(game, player, line);
 		line = get_next_line(fd);
 	}
+	free(line);
 	game->image_sizes = malloc(sizeof(t_i) * 5);
 	game->textures = malloc(sizeof(t_img) * 5);
 	player->d = malloc(sizeof(t_rayVals));
