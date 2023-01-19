@@ -1,5 +1,12 @@
 #include "../headers/cub3d.h"
 
+void	map_free(char **Map, int j)
+{
+	while (j >= 0)
+		free(Map[j--]);
+	free(Map);
+}
+
 void	error(char *str)
 {
 	ft_putstr_fd(str, 2);

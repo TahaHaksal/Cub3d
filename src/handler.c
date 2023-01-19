@@ -22,3 +22,25 @@ int	keyhandler(int keycode, t_mlx *mlx)
 		mlx->game->cursor += 1;
 	return (0);
 }
+
+int	mouse_move(int x, int y, t_mlx *mlx)
+{
+	mlx->game->mouse_last = x;
+	if (mlx->game->cursor % 2)
+		mlx_mouse_hide();
+	else
+		mlx_mouse_show();
+	if (mlx->game->mouse_first != mlx->game->mouse_last)
+	{
+		if (mlx->game->mouse_first > mlx->game->mouse_last)
+			calc_rotation(mlx->player, 'l');
+		else
+			calc_rotation(mlx->player, 0);
+		if (mlx->game->mouse_last > WIDTH)
+			mlx_mouse_move(mlx->window, 0, HEIGHT / 2);
+		if (mlx->game->mouse_last <= 0)
+			mlx_mouse_move(mlx->window, WIDTH, HEIGHT / 2);
+		mlx->game->mouse_first = mlx->game->mouse_last;
+	}
+	return (0);
+}

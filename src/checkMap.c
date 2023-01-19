@@ -2,13 +2,18 @@
 
 int	map_control2(char **m, char *line, int *j, int *len)
 {
-	static int	temp;
-	int			player_count;
-
 	int (i) = -1;
-	player_count = 0;
-	if (++temp <= 6)
+	int (player_count) = 0;
+	if (ft_strnstr(line, "NO", ft_strlen(line))
+		|| ft_strnstr(line, "SO", ft_strlen(line))
+		|| ft_strnstr(line, "WE", ft_strlen(line))
+		|| ft_strnstr(line, "EA", ft_strlen(line))
+		|| ft_strnstr(line, "F", ft_strlen(line))
+		|| ft_strnstr(line, "C", ft_strlen(line)))
+	{
+		free(line);
 		return (0);
+	}
 	m[++(*j)] = ft_strdup(line);
 	i = -1;
 	while (m[*j][++i])
@@ -20,6 +25,7 @@ int	map_control2(char **m, char *line, int *j, int *len)
 	}
 	if ((*len) < ft_strlen(m[*j]))
 		(*len) = ft_strlen(m[*j]);
+	free(line);
 	return (player_count);
 }
 
@@ -34,17 +40,15 @@ char	**map_control(char *path, t_v *j_len, int j, int i)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		error("Error : wrong file!\n");
-	m = malloc(sizeof(char *) * 1024);
+	m = malloc(sizeof(char *) * 100);
 	line = get_next_line(fd);
 	while (line)
 	{
 		player_count += map_control2(m, line, &j, &len);
-		free(line);
 		line = get_next_line(fd);
 	}
 	if (player_count != 1)
 		error("Error : can only be 1 player!\n");
-	free(line);
 	close(fd);
 	j_len->x = j;
 	j_len->y = len;

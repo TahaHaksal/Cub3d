@@ -11,12 +11,13 @@
 # include <stdlib.h>
 # define HEIGHT 1080
 # define WIDTH 1920
-# define MINIMAP_GRID 5
-# define ROT_SPEED 0.1
-# define MOV_SPEED 0.15
-# define COL 0.5
+# define MINIMAP_GRID 15
 # define MINIMAP_H 255
 # define MINIMAP_W 255
+# define FOV 60
+# define ROT_SPEED 0.05
+# define MOV_SPEED 0.15
+# define COL 0.5
 
 typedef struct s_2dintVector
 {
@@ -62,6 +63,8 @@ typedef struct s_game
 	int		mouse_first;
 	int		mouse_last;
 	int		mini_map;
+	int		max_len;
+	int		max_h;
 	int		cursor;
 	int		floor;
 	int		row;
@@ -69,7 +72,6 @@ typedef struct s_game
 	void	*weapon;
 	char	*tex_paths[4];
 	char	**grid;
-	int		max_len;
 	t_i		*image_sizes;
 	t_i		tex;
 	t_img	*textures;
@@ -104,11 +106,11 @@ double	map(double value, double from_high, double to_low, double to_high);
 int		norm(double x, double y);
 void	error(char *str);
 int		close_exit(t_mlx *vars);
+void	map_free(char **Map, int j);
 
 char	*ft_strpbrk(char *string, char *set);
 int		char_to_index(char c, t_player *player);
 int		str_to_colour(char *str);
-double	map(double value, double from_high, double to_low, double to_high);
 
 int		keyhandler(int keycode, t_mlx *mlx);
 int		mouse_move(int x, int y, t_mlx *mlx);

@@ -6,37 +6,33 @@ void	draw_square(t_img *img, double x, double y, int colour)
 	int	j;
 
 	i = -1;
-	while (++i < MINIMAP_GRID)
+	while (++i < MINIMAP_GRID - 1)
 	{
 		j = -1;
-		while (++j < MINIMAP_GRID)
-			my_mlx_pixel_put(img,  x + i, \
-				y + j, colour);
+		while (++j < MINIMAP_GRID - 1)
+			my_mlx_pixel_put(img, (MINIMAP_GRID * x) + i, \
+				(MINIMAP_GRID * y) + j, colour);
 	}
 }
 
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
-	int	i;
-	int	x;
 	int	j;
-	int	y;
 
-	i = -1;
-	while (++i < MINIMAP_W * 2)
+	int (i) = -1;
+	while (++i < game->row)
 	{
 		j = -1;
-		while (++j < MINIMAP_H * 2)
+		while (game->grid[i][++j])
 		{
-			y = map(j, MINIMAP_H * 2, 0, game->row);
-			x = map(i, MINIMAP_W * 2, 0, game->max_len);
-			if (game->grid[y][x] == '1')
-				my_mlx_pixel_put(img, i + WIDTH / 4, j + HEIGHT / 4, 0x00FF0000);
-			else if (game->grid[y][x] == '0')
-				my_mlx_pixel_put(img, i + WIDTH / 4, j + HEIGHT / 4, 0x00FFFFFF);
+			if (game->grid[i][j] == '1')
+				draw_square(img, j, i, get_trgb(149, 255, 0, 0));
+			else if (game->grid[i][j] == '0')
+				draw_square(img, j, i, 0x95FFFFFF);
 		}
 	}
-	draw_square(img, player->pos.x + WIDTH / 4, player->pos.y + HEIGHT / 4, 0x9500FF00);
+	calc_diagonal_line(img, player, mlx);
+	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
 }
 
 void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
@@ -97,4 +93,3 @@ int	draw_map(t_mlx *mlx)
 	}
 	return (0);
 }
-

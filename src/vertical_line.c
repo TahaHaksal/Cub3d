@@ -7,7 +7,7 @@ void	vert_line(int x, t_img *img, t_img *tex, t_draw_wall w)
 	int		tex_y;
 	char	*test;
 
-	int (t) = ((HEIGHT / w.l_h) * 20);
+	int (t) = ((HEIGHT / w.l_h) * 21);
 	if (t > 255)
 		t = 255;
 	step = 1.0 * w.t_h / w.l_h;
