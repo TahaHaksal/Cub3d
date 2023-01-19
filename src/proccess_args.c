@@ -11,31 +11,16 @@ bool	process_tex(t_game *game, char *line)
 	else if (!ft_strncmp(line, "EA", 2))
 		game->tex_paths[3] = ft_strtrim(&line[3], " \r\t\n");
 	else if (!ft_strncmp(line, "F", 1))
-		game->floor = strToColour(&line[2]);
+		game->floor = str_to_colour(&line[2]);
 	else if (!ft_strncmp(line, "C", 1))
-		game->ceiling = strToColour(&line[2]);
+		game->ceiling = str_to_colour(&line[2]);
 	else
 	{
+		// free(line);
 		return (false);
-		free(line);
 	}
 	free(line);
 	return (true);
-}
-
-void	paths_to_img(t_mlx *mlx, t_game *game)
-{
-	t_img	*textures;
-	char	**tex_paths;
-	t_v		*size;
-
-	int (i) = -1;
-	textures = game->textures;
-	tex_paths = game->tex_paths;
-	size = game->image_sizes;
-	while (++i < 4)
-		textures[i].img = mlx_xpm_file_to_image \
-		(mlx->mlx, tex_paths[i], (int *)&size[i].x, (int *)&size[i].y);
 }
 
 void	process_grid(t_game *game, t_player *player, char *line)
@@ -67,19 +52,29 @@ void	process_grid(t_game *game, t_player *player, char *line)
 	free(line);
 }
 
-void	init_game(t_game *game, t_mlx *mlx)
+void	init_game(t_game *game, t_mlx *mlx, t_img *textrs)
 {
-	int	a;
+	int		x;
+	int		y;
+	t_i		*size;
+	char	**tex_paths;
 
+	tex_paths = game->tex_paths;
+	size = game->image_sizes;
+	int (i) = -1;
+	while (++i <= 3)
+	{
+		textrs[i].img = mlx_xpm_file_to_image(mlx->mlx, \
+			tex_paths[i], &size[i].x, &size[i].y);
+		textrs[i].addr = mlx_get_data_addr(textrs[i].img, \
+		&(textrs[i].bpp), &textrs[i].ll, &textrs[i].nd);
+	}
 	game->weapon = mlx_xpm_file_to_image(mlx->mlx, \
-					"/Users/dkarhan/Desktop/ak-47.xpm", &a, &a);
-	game->miniMap = 1;
+		"./images/ak-47.xpm", &i, &i);
+	game->mini_map = 1;
 	game->cursor = 1;
 	game->mouse_first = 0;
 	game->mouse_last = 0;
-	game->grid = malloc(sizeof(char *) * 100);
-	game->textures = malloc(sizeof(t_img) * 5);
-	paths_to_img(mlx, game);
 }
 
 void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
@@ -89,23 +84,24 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 	char	*line;
 
 	fd = open(path, O_RDONLY);
-	if (fd > 2)
-	{
-		init_game(game, mlx);
-		line = get_next_line(fd);
-		while (line)
-		{
-			if (!process_tex(game, line))
-				break ;
-			line = get_next_line(fd);
-		}
-		while (line)
-		{
-			process_grid(game, player, line);
-			line = get_next_line(fd);
-		}
-		player->d = malloc(sizeof(t_rayVals));
-	}
-	else
+	if (fd <= 2)
 		error ("Error: Couldn't find the file!\n");
+	line = get_next_line(fd);
+	while (line)
+	{
+		if (!process_tex(game, line))
+			break ;
+		line = get_next_line(fd);
+	}
+	game->grid = malloc(sizeof(char *) * 100);
+	while (line)
+	{
+		process_grid(game, player, line);
+		line = get_next_line(fd);
+	}
+	close(fd);
+	game->image_sizes = malloc(sizeof(t_i) * 5);
+	game->textures = malloc(sizeof(t_img) * 5);
+	player->d = malloc(sizeof(t_rayVals));
+	init_game(game, mlx, game->textures);
 }

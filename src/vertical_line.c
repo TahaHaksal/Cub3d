@@ -1,34 +1,49 @@
 #include "../headers/cub3d.h"
 
-void	vert_line(int x, int line_start, int line_end, t_img *img, int color)
+void	vert_line(int x, t_img *img, t_img *tex, t_draw_wall w)
 {
-	while (line_start++ < line_end)
-		my_mlx_pixel_put(img, x, line_start, color);
+	double	step;
+	double	tex_pos;
+	int		tex_y;
+	char	*test;
+
+	int (t) = ((HEIGHT / w.l_h) * 21);
+	if (t > 255)
+		t = 255;
+	step = 1.0 * w.t_h / w.l_h;
+	tex_pos = (w.wall_mn - HEIGHT / 2 + w.l_h / 2) * step;
+	while (w.wall_mn < w.wall_mx)
+	{
+		tex_y = (int)tex_pos;
+		test = tex->addr + ((tex_y % w.t_w) * \
+		tex->ll + w.tex_x * (tex->bpp / 8));
+		my_mlx_pixel_put(img, x, w.wall_mn, *(unsigned int *)test + (t << 24));
+		tex_pos += step;
+		w.wall_mn++;
+	}
 }
 
 void	diagonal_line(t_v start, t_v end, t_img *img, t_mlx *mlx)
 {
-	double	dx;
-	double	dy;
-	double	Xinc;
-	double	Yinc;
-	int		steps;
+	double (dx) = end.x - start.x;
+	double (dy) = end.y - start.y;
+	int (steps) = fabs(dy);
+	if (fabs(dx) > fabs(dy))
+		steps = fabs(dx);
+	double (Xinc) = dx / (float) steps;
+	double (Yinc) = dy / (float) steps;
 	int (i) = -1;
-
-	Xinc = dx / (float) steps;
-	Yinc = dy / (float) steps;
-	dx = end.x - start.x;
-	dy = end.y - start.y;
-	steps = fabs(dx) > fabs(dy) ? fabs(dx) : fabs(dy);
+	int (m) = MINIMAP_GRID;
 	while (++i < 125)
 	{
-		if (mlx->game->grid[((int)(start.y) / MINIMAP_GRID)][((int)(start.x) / MINIMAP_GRID)] != '1')
+		if (mlx->game->grid[((int)(start.y) / m)][((int)(start.x) / m)] != '1')
 		{
-			my_mlx_pixel_put(img, (int)roundf(start.x), (int)roundf(start.y), get_trgb(i * 2, 0, 0, 255));
+			my_mlx_pixel_put(img, (int)roundf(start.x), \
+			(int)roundf(start.y), get_trgb(i * 2, 0, 0, 255));
 			start.x += Xinc;
 			start.y += Yinc;
 		}
 		else
-			break;
+			break ;
 	}
 }

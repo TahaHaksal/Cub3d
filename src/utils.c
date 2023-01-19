@@ -1,5 +1,11 @@
 #include "../headers/cub3d.h"
 
+void	error(char *str)
+{
+	ft_putstr_fd(str, 2);
+	exit(EXIT_FAILURE);
+}
+
 int	close_exit(t_mlx *vars)
 {
 	printf("Game Over!\n");
