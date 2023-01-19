@@ -3,6 +3,8 @@
 		"cub3d.h": "c",
 		"get_next_line.h": "c",
 		"libft.h": "c",
-		"unistd.h": "c"
+		"unistd.h": "c",
+		"stdio.h": "c",
+		"stdbool.h": "c"
 	}
 }

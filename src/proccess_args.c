@@ -15,10 +15,7 @@ bool	process_tex(t_game *game, char *line)
 	else if (!ft_strncmp(line, "C", 1))
 		game->ceiling = str_to_colour(&line[2]);
 	else
-	{
 		return (false);
-		free(line);
-	}
 	free(line);
 	return (true);
 }
@@ -45,8 +42,8 @@ void	process_grid(t_game *game, t_player *player, char *line)
 			player->plane.y = -val;
 		}
 		*ptr = '0';
-		player->pos.x = ft_strlen(line) - ft_strlen(ptr);
-		player->pos.y = i;
+		player->pos.x = ft_strlen(line) - ft_strlen(ptr) + 0.2;
+		player->pos.y = i + 0.2;
 	}
 	game->row = ++i;
 	free(line);
@@ -66,12 +63,14 @@ void	init_game(t_game *game, t_mlx *mlx, t_img *textrs)
 	{
 		textrs[i].img = mlx_xpm_file_to_image(mlx->mlx, \
 			tex_paths[i], &size[i].x, &size[i].y);
+		if (!textrs[i].img)
+			error("Yarra");
 		textrs[i].addr = mlx_get_data_addr(textrs[i].img, \
 		&(textrs[i].bpp), &textrs[i].ll, &textrs[i].nd);
 	}
 	game->weapon = mlx_xpm_file_to_image(mlx->mlx, \
 		"./images/ak-47.xpm", &i, &i);
-	game->miniMap = 1;
+	game->mini_map = 1;
 	game->cursor = 1;
 	game->mouse_first = 0;
 	game->mouse_last = 0;

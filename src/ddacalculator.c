@@ -56,7 +56,7 @@ void	calc_sides(t_player *player)
 	t_rayVals	*d;
 
 	d = player->d;
-	if (d->rayDir.x < 0)
+	if (d->ray_dir.x < 0)
 	{
 		d->step.x = -1;
 		d->side.x = (player->pos.x - d->map.x) * d->delta.x;
@@ -66,7 +66,7 @@ void	calc_sides(t_player *player)
 		d->step.x = 1;
 		d->side.x = (d->map.x + 1.0 - player->pos.x) * d->delta.x;
 	}
-	if (d->rayDir.y < 0)
+	if (d->ray_dir.y < 0)
 	{
 		d->step.y = 1;
 		d->side.y = (d->map.y + 1.0 - player->pos.y) * d->delta.y;

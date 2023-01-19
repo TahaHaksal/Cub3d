@@ -4,9 +4,10 @@ void	map_free(char **Map, int j)
 {
 	while (j--)
 		free(Map[j]);
+	free(Map);
 }
 
-void	checker(char *path)
+int	checker(char *path)
 {
 	t_v		j_len;
 	char	**map;
@@ -16,6 +17,7 @@ void	checker(char *path)
 	right_left_check(map, -1, (int)j_len.x, (int)j_len.y);
 	character_check(map, -1, (int)j_len.x);
 	map_free(map, (int)j_len.x);
+	return (j_len.y);
 }
 
 int	mouse_move(int x, int y, t_mlx *mlx)
@@ -47,6 +49,7 @@ void	start_game(char *av)
 	t_game		game;
 	t_player	player;
 
+	game.max_len = checker(av);
 	mlx.mlx = mlx_init();
 	process_args(&game, av, &player, &mlx);
 	mlx.window = mlx_new_window(mlx.mlx, WIDTH, HEIGHT, "Cub3D");
@@ -65,11 +68,8 @@ void	start_game(char *av)
 int	main(int ac, char **av)
 {
 	if (ac == 2)
-	{
-		checker(av[1]);
 		start_game(av[1]);
-	}
 	else
 		error("Error: 2 arguments required for the game!\n");
-	return (0);
+	exit (0);
 }

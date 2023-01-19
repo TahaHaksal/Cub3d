@@ -17,7 +17,7 @@ int	keyhandler(int keycode, t_mlx *mlx)
 	else if (keycode == 13)
 		calc_movement_f(mlx);
 	else if (keycode == 46)
-		mlx->game->miniMap += 1;
+		mlx->game->mini_map += 1;
 	else if (keycode == 14)
 		mlx->game->cursor += 1;
 	return (0);

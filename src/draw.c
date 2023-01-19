@@ -18,22 +18,26 @@ void	draw_square(t_img *img, double x, double y, int colour)
 void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 {
 	int	i;
+	int	x;
 	int	j;
+	int	y;
 
 	i = -1;
-	while (++i < game->row)
+	while (++i < MINIMAP_W * 2)
 	{
 		j = -1;
-		while (game->grid[i][++j])
+		while (++j < MINIMAP_H * 2)
 		{
-			if (game->grid[i][j] == '1')
-				draw_square(img, j, i, get_trgb(149, 255, 0, 0));
-			else if (game->grid[i][j] == '0')
-				draw_square(img, j, i, 0x95FFFFFF);
+			y = map(j, MINIMAP_H * 2, 0, game->row);
+			x = map(i, MINIMAP_W * 2, 0, game->max_len);
+			if (game->grid[y][x] == '1')
+				my_mlx_pixel_put(img, i + WIDTH / 4, j + HEIGHT / 4, 0x00FF0000);
+			else if (game->grid[y][x] == '0')
+				my_mlx_pixel_put(img, i + WIDTH / 4, j + HEIGHT / 4, 0x00FFFFFF);
 		}
 	}
-	calc_diagonal_line(img, player, mlx);
-	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
+	// calc_diagonal_line(img, player, mlx);
+	draw_square(img, player->pos.x+ HEIGHT / 4, player->pos.y+ HEIGHT / 4, 0x9500FF00);
 }
 
 void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
@@ -42,7 +46,7 @@ void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
 	t_draw_wall	e;
 	int			i;
 
-	i = pick_dir(d->wall, d->rayDir);
+	i = pick_dir(d->wall, d->ray_dir);
 	t = mlx->game->textures;
 	e.l_h = (int)(HEIGHT / d->wall.x);
 	e.wall_mn = -e.l_h / 3 + HEIGHT / 2;
@@ -67,9 +71,9 @@ void	draw_scene(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	while (x < WIDTH)
 	{
 		camera_x = 2 * x / (double)WIDTH - 1;
-		d->rayDir.x = (player->dir.x + player->plane.x * camera_x) + 0.000001;
-		d->rayDir.y = (player->dir.y + player->plane.y * camera_x) + 0.000001;
-		calc_delta_dist(d->rayDir, &d->delta);
+		d->ray_dir.x = (player->dir.x + player->plane.x * camera_x) + 0.000001;
+		d->ray_dir.y = (player->dir.y + player->plane.y * camera_x) + 0.000001;
+		calc_delta_dist(d->ray_dir, &d->delta);
 		d->map.x = (int)player->pos.x;
 		d->map.y = (int)player->pos.y;
 		calc_sides(player);
@@ -84,10 +88,14 @@ int	draw_map(t_mlx *mlx)
 	mlx_clear_window(mlx->mlx, mlx->window);
 	draw_ceil_and_floor(mlx, -1, -1);
 	draw_scene(mlx->image, mlx->game, mlx->player, mlx);
-	if (mlx->game->miniMap % 2)
-		draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
-	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
-	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
 	draw_target(mlx);
+	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
+	// mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
+	if (!(mlx->game->mini_map % 2))
+	{
+		draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
+		mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
+	}
 	return (0);
 }
+

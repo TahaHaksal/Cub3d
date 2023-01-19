@@ -16,7 +16,7 @@ int	map_control2(char **m, char *line, int *j, int *len)
 		if (!ft_strchr(" 01NEWS", m[*j][i]) && m[*j][i] != '\n')
 			error("Error : wrong map character!\n");
 		else if (ft_strchr("NEWS", m[*j][i]))
-			player_count = 1;
+			player_count += 1;
 	}
 	if ((*len) < ft_strlen(m[*j]))
 		(*len) = ft_strlen(m[*j]);
@@ -34,7 +34,7 @@ char	**map_control(char *path, t_v *j_len, int j, int i)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		error("Error : wrong file!\n");
-	m = malloc(sizeof(char *) * 100);
+	m = malloc(sizeof(char *) * 300);
 	line = get_next_line(fd);
 	while (line)
 	{
@@ -58,6 +58,8 @@ void	top_bottom_check(char **m, int i, int j, int len)
 		a = -1;
 		while (m[++a])
 		{
+			if (i > ft_strlen(m[a]))
+				break ;
 			if (m[a][i] == ' ')
 				continue ;
 			else if (m[a][i] == '0')
@@ -125,12 +127,15 @@ void	character_check(char **m, int i, int j)
 					error("error: (SpaceCheck) map error!\n");
 			}
 			else if (ft_strchr("0NEWS", m[i][a]))
-				if ((i != 0) && (a > ft_strlen(m[i - 1]))
-					|| (i != ft_strlen(m[i]) && a > ft_strlen(m[i + 1]))
+				if ((i != 0) && (a >= ft_strlen(m[i - 1]) - 1)
+					|| (i != ft_strlen(m[i]) && a >= ft_strlen(m[i + 1]) - 1)
 					|| (i != j - 1 && m[i + 1][a] == ' ')
 					|| (a != 0 && m[i][a - 1] == ' ')
 					|| ((a != ft_strlen(m[i]) - 1) && m[i][a + 1] == ' '))
+				{
+					printf("%d %d\n", a, i);
 					error("error: (Zero-PlayerCheck) map error!\n");
+				}
 		}
 	}
 }

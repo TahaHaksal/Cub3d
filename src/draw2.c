@@ -60,14 +60,14 @@ int	pick_tex_x(int i, t_rayVals ray, t_player *p, t_game *game)
 
 	tex_w = game->image_sizes[i].x;
 	if (ray.wall.y == 0)
-		wall_x = p->pos.y - ray.wall.x * ray.rayDir.y;
+		wall_x = p->pos.y - ray.wall.x * ray.ray_dir.y;
 	else
-		wall_x = p->pos.x + ray.wall.x * ray.rayDir.x;
+		wall_x = p->pos.x + ray.wall.x * ray.ray_dir.x;
 	wall_x -= floor(wall_x);
 	tex_x = (wall_x * (double)(tex_w));
-	if (ray.wall.y == 0 && ray.rayDir.x > 0)
+	if (ray.wall.y == 0 && ray.ray_dir.x > 0)
 		tex_x = tex_w - tex_x - 1;
-	if (ray.wall.y == 1 && ray.rayDir.y < 0)
+	if (ray.wall.y == 1 && ray.ray_dir.y < 0)
 		tex_x = tex_w - tex_x - 1;
 	return (tex_x);
 }
