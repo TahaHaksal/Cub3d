@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   draw.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/20 08:54:41 by mhaksal           #+#    #+#             */
+/*   Updated: 2023/01/20 08:54:42 by mhaksal          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/cub3d.h"
 
 void	draw_square(t_img *img, double x, double y, int colour)
@@ -20,19 +32,23 @@ void	draw_minimap(t_img *img, t_game *game, t_player *player, t_mlx *mlx)
 	int	j;
 
 	int (i) = -1;
-	while (++i < game->row)
+	if (game->row < HEIGHT / MINIMAP_GRID && \
+		game->max_len < WIDTH / MINIMAP_GRID)
 	{
-		j = -1;
-		while (game->grid[i][++j])
+		while (++i < game->row)
 		{
-			if (game->grid[i][j] == '1')
-				draw_square(img, j, i, get_trgb(149, 255, 0, 0));
-			else if (game->grid[i][j] == '0')
-				draw_square(img, j, i, 0x95FFFFFF);
+			j = -1;
+			while (game->grid[i][++j])
+			{
+				if (game->grid[i][j] == '1')
+					draw_square(img, j, i, get_trgb(149, 255, 0, 0));
+				else if (game->grid[i][j] == '0')
+					draw_square(img, j, i, 0x95FFFFFF);
+			}
 		}
+		calc_diagonal_line(img, player, mlx);
+		draw_square(img, player->pos.x - 0.4, player->pos.y - 0.4, 0x9500FF00);
 	}
-	calc_diagonal_line(img, player, mlx);
-	draw_square(img, player->pos.x, player->pos.y, 0x9500FF00);
 }
 
 void	draw_walls(int x, t_rayVals *d, t_img *img, t_mlx *mlx)
@@ -86,7 +102,9 @@ int	draw_map(t_mlx *mlx)
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);
 	mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->game->weapon, 700, 700);
 	draw_target(mlx);
-	if (!(mlx->game->mini_map % 2))
+	if (!(mlx->game->mini_map % 2) && \
+		(mlx->game->row < HEIGHT / MINIMAP_GRID && \
+			mlx->game->max_len < WIDTH / MINIMAP_GRID))
 	{
 		draw_minimap(mlx->image, mlx->game, mlx->player, mlx);
 		mlx_put_image_to_window(mlx->mlx, mlx->window, mlx->image->img, 0, 0);

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checkMap.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/20 08:54:27 by mhaksal           #+#    #+#             */
+/*   Updated: 2023/01/20 08:54:28 by mhaksal          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/cub3d.h"
 
 int	map_control2(char **m, char *line, int *j, int *len)
@@ -40,7 +52,7 @@ char	**map_control(char *path, t_v *j_len, int j, int i)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		error("Error : wrong file!\n");
-	m = malloc(sizeof(char *) * 100);
+	m = malloc(sizeof(char *) * 1024);
 	line = get_next_line(fd);
 	while (line)
 	{

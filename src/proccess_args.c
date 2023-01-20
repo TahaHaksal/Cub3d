@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   proccess_args.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/01/20 08:55:00 by mhaksal           #+#    #+#             */
+/*   Updated: 2023/01/20 08:55:01 by mhaksal          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../headers/cub3d.h"
 
 bool	process_tex(t_game *game, char *line)
@@ -63,6 +75,8 @@ void	init_game(t_game *game, t_mlx *mlx, t_img *textrs)
 	{
 		textrs[i].img = mlx_xpm_file_to_image(mlx->mlx, \
 			tex_paths[i], &size[i].x, &size[i].y);
+		if (!textrs[i].img)
+			error("Couldn't find the image file\n");
 		textrs[i].addr = mlx_get_data_addr(textrs[i].img, \
 		&(textrs[i].bpp), &textrs[i].ll, &textrs[i].nd);
 	}
@@ -90,7 +104,7 @@ void	process_args(t_game *game, char *path, t_player *player, t_mlx *mlx)
 			break ;
 		line = get_next_line(fd);
 	}
-	game->grid = malloc(sizeof(char *) * 1000);
+	game->grid = malloc(sizeof(char *) * 1024);
 	while (line)
 	{
 		process_grid(game, player, line);

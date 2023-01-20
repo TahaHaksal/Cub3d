@@ -6,7 +6,7 @@
 /*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 09:35:08 by mhaksal           #+#    #+#             */
-/*   Updated: 2022/12/15 08:47:16 by mhaksal          ###   ########.fr       */
+/*   Updated: 2023/01/20 08:56:07 by mhaksal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,8 @@ char	*ft_strjoin_g(char *left_str, char *buff)
 	}
 	if (!left_str || !buff)
 		return (NULL);
-	str = malloc(sizeof(char) * ((ft_strlen_g(left_str) + ft_strlen_g(buff)) + 1));
+	str = malloc(sizeof(char) * ((ft_strlen_g(left_str) + \
+		ft_strlen_g(buff)) + 1));
 	if (str == NULL)
 		return (NULL);
 	i = -1;

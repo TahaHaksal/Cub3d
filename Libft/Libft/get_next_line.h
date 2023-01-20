@@ -6,7 +6,7 @@
 /*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/28 09:35:14 by mhaksal           #+#    #+#             */
-/*   Updated: 2022/12/15 08:46:39 by mhaksal          ###   ########.fr       */
+/*   Updated: 2023/01/20 08:56:23 by mhaksal          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@
 #  define BUFFER_SIZE 1
 
 # endif // !BUFFER_SIZE
-
 
 char	*get_next_line(int fd);
 size_t	ft_strlcpy_g(char *dest, const char *src, size_t size);

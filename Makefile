@@ -32,3 +32,5 @@ fclean:
 	@echo $(RED) "$(NAME) deleted"$(END) $(GREEN)"successfully!\n" $(END)
 
 re: fclean all
+
+.PHONY: all fclean clean re
