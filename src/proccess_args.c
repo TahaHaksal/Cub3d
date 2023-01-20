@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proccess_args.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dkarhan <dkarhan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 08:55:00 by mhaksal           #+#    #+#             */
-/*   Updated: 2023/01/20 08:55:01 by mhaksal          ###   ########.fr       */
+/*   Updated: 2023/01/20 11:49:55 by dkarhan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	process_tex(t_game *game, char *line)
 		game->floor = str_to_colour(&line[2]);
 	else if (!ft_strncmp(line, "C", 1))
 		game->ceiling = str_to_colour(&line[2]);
-	else
+	else if (ft_strpbrk(line, "01"))
 		return (false);
 	free(line);
 	return (true);

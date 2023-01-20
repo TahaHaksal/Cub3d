@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   color.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhaksal <mhaksal@student.42.fr>            +#+  +:+       +#+        */
+/*   By: dkarhan <dkarhan@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/20 08:54:35 by mhaksal           #+#    #+#             */
-/*   Updated: 2023/01/20 08:54:36 by mhaksal          ###   ########.fr       */
+/*   Updated: 2023/01/20 11:55:50 by dkarhan          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ int	str_to_colour(char *str)
 	int	b;
 
 	r = ft_atoi(str);
-	while (ft_isdigit(*str))
+	while (*str != ',')
 		str++;
 	str++;
 	g = ft_atoi(str);
-	while (ft_isdigit(*str))
+	while (*str != ',')
 		str++;
 	str++;
 	b = ft_atoi(str);
