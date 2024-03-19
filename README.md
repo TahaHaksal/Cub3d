@@ -1,4 +1,4 @@
-# wolfenstein-game-using-ray-casting
+# Cub3d
 
 ## Resource
   * [Raycasting 1](https://lodev.org/cgtutor/raycasting.html)
